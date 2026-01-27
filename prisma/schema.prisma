@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  displayName  String
+  iconUrl      String?
+  coupleId     String?
+  couple       Couple?  @relation(fields: [coupleId], references: [id])
+  createdAt    DateTime @default(now())
+
+  entries    Entry[]
+  readStatus ReadStatus[] // ★ 追加
+}
+
+model Couple {
+  id         String   @id @default(cuid())
+  inviteCode String   @unique
+  users      User[]
+  createdAt  DateTime @default(now())
+
+  entries Entry[]
+}
+
+model Entry {
+  id        String    @id @default(cuid())
+  type      String
+  content   String
+  dueDate   DateTime?
+  done      Boolean   @default(false)
+  userId    String
+  coupleId  String
+  createdAt DateTime  @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  couple Couple @relation(fields: [coupleId], references: [id])
+
+  readStatus ReadStatus[]
+}
+
+model ReadStatus {
+  id      String   @id @default(cuid())
+  entryId String
+  userId  String
+  isRead  Boolean  @default(false)   // ★ 必須
+  readAt  DateTime @default(now())
+
+  entry Entry @relation(fields: [entryId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@unique([entryId, userId])        // ★ これも必須
+}

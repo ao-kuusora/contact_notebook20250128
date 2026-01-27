@@ -1,0 +1,9 @@
+-- CreateTable
+CREATE TABLE "ReadStatus" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "entryId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "readAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "ReadStatus_entryId_fkey" FOREIGN KEY ("entryId") REFERENCES "Entry" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "ReadStatus_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);

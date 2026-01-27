@@ -1,0 +1,106 @@
+/*!************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[7].use[3]!./app/chores/Chores.module.css ***!
+  \************************************************************************************************************************************************************************************************************************************************************************/
+/* 全体 */
+.Chores_container__xhXOc {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  font-family: "Zen Maru Gothic", sans-serif;
+  color: #4A3F35;
+}
+
+/* タイトル */
+.Chores_title__4ktD3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #553924;
+}
+
+/* フォーム全体 */
+.Chores_form__E1BIn {
+  background: #fff;
+  border: 1px solid #EADFD4;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(234, 223, 212, 0.4);
+}
+
+/* ラジオボタンのグループ */
+.Chores_radioGroup__jDOJB {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.Chores_radioItem__JL20r {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #4A3F35;
+}
+
+/* テキストエリア */
+.Chores_textarea__u73jU {
+  width: 100%;
+  height: 80px;
+  border: 1px solid #D8CFC7;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 14px;
+  resize: none;
+  margin-top: 12px;
+  background: #FBF6F1;
+  color: #4A3F35;
+}
+
+/* 投稿ボタン */
+.Chores_button__0iKYp {
+  margin-top: 16px;
+  width: 100%;
+  background:#8B5E3C;
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.Chores_button__0iKYp:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* 一覧 */
+.Chores_list__q_9vf {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.Chores_item__3U6ji {
+  background: #fff;
+  border: 1px solid #EADFD4;
+  border-radius: 12px;
+  padding: 12px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 4px 12px rgba(234, 223, 212, 0.4);
+}
+
+.Chores_itemMeta__L78kK {
+  font-size: 12px;
+  color: #8C7A6B;
+}
+
+.Chores_itemContent__GTy2b {
+  margin-top: 6px;
+  font-size: 14px;
+  white-space: pre-wrap;
+  color: #4A3F35;
+}

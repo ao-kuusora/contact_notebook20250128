@@ -1,0 +1,218 @@
+/*!**********************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[7].use[3]!./app/diary/Diary.module.css ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************/
+/* ============================
+   全体レイアウト
+============================ */
+.Diary_container__ioKpl {
+  margin: 0 auto;
+  padding: 20px 16px;
+  height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-family: "Zen Maru Gothic", sans-serif;
+  color: #4A3F35;
+}
+
+.Diary_page__YkbSr,
+.Diary_writeArea__lZvqk {
+  width: 100%;
+}
+
+.Diary_title__8YuXr {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #553924;
+}
+
+/* ============================
+   検索欄（固定）
+============================ */
+.Diary_searchArea__qXbtl {
+  display: flex;
+  gap: 8px;
+  padding: 12px 0;
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  z-index: 29;
+}
+
+.Diary_dateInput__QoE9H {
+  flex: 1 1;
+  padding: 8px;
+  border: 1px solid #D8CFC7;
+  border-radius: 8px;
+  background: #FFF9F4;
+  color: #4A3F35;
+}
+
+.Diary_searchButton__idNtt {
+  padding: 8px 12px;
+  background: #8B5E3C;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.Diary_searchButton__idNtt:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* ============================
+   日記一覧（スクロール）
+============================ */
+.Diary_page__YkbSr {
+  flex: 1 1;
+  overflow-y: auto;
+  width: 100%;
+  padding-top: 120px;
+  padding-bottom: 160px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 16px;
+  gap: 16px;
+}
+
+/* ============================
+   ブロック
+============================ */
+.Diary_diaryEntry__9xQkD {
+  background: #FFFDF7;
+  border: 1px solid #E0DCCC;
+  border-radius: 12px;
+  padding: 12px;
+
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.06),
+    0 0 0 3px #F7F5EE inset;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 自分の投稿 */
+.Diary_mine__8Wdu_ {
+  background: #F4ECE4;
+  border-color: #E3D6C8;
+}
+
+/* 相手の投稿 */
+.Diary_theirs__bXFCM {
+  background: #FFF7E8;
+  border-color: #F0E2C5;
+}
+
+/* タイトルリンク */
+.Diary_link__gwEAn {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #553924;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.Diary_link__gwEAn:hover {
+  text-decoration: underline;
+}
+
+/* ============================
+   メタ情報
+============================ */
+.Diary_meta___Jo7H {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.Diary_icon__ol8gL {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.Diary_author__uYCu1 {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6B5A4A;
+}
+
+.Diary_date__xHUVW {
+  font-size: 11px;
+  color: #A08F80;
+}
+
+/* 空表示 */
+.Diary_empty__ztc6G {
+  text-align: center;
+  color: #8C7A6B;
+  padding: 40px 0;
+  margin: 0 auto;
+}
+
+/* ============================
+   今日の日記を書く（固定）
+============================ */
+.Diary_writeArea__lZvqk {
+  bottom: 70px;
+  width: 98%;
+  margin: 0 auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+}
+
+.Diary_textarea___TFiR {
+  width: 100%;
+  height: 70px;
+  border: 1px solid #D8CFC7;
+  border-radius: 10px;
+  padding: 10px;
+  resize: none;
+  background: #FFF9F4;
+  color: #4A3F35;
+}
+
+.Diary_button__nlGSU {
+  background: #8B5E3C;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  width: 100%;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.Diary_button__nlGSU:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* ============================
+   レスポンシブ（1カラム）
+============================ */
+@media (max-width: 480px) {
+  .Diary_page__YkbSr {
+    grid-template-columns: 1fr;
+  }
+}

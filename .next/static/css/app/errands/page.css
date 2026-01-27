@@ -1,0 +1,123 @@
+/*!**************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[7].use[3]!./app/errands/Errands.module.css ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************/
+/* 全体 */
+.Errands_container__3v0mi {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  font-family: "Zen Maru Gothic", sans-serif;
+  color: #4A3F35;
+}
+
+.Errands_title__ITT5l {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #553924;
+}
+
+/* 投稿フォーム */
+.Errands_card__HmM8s {
+  background: #fff;
+  border: 1px solid #EADFD4;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(234, 223, 212, 0.4);
+}
+
+.Errands_textarea___K0UV {
+  width: 100%;
+  height: 80px;
+  border: 1px solid #D8CFC7;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 14px;
+  resize: none;
+  background: #FBF6F1;
+  color: #4A3F35;
+}
+
+.Errands_input__nUmqr {
+  width: 100%;
+  border: 1px solid #D8CFC7;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 14px;
+  background: #FBF6F1;
+  color: #4A3F35;
+}
+
+/* 投稿ボタン */
+.Errands_button__ueX9H {
+  width: 100%;
+  background: #8B5E3C;
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.Errands_button__ueX9H:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* 一覧 */
+.Errands_list__vGvzO {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.Errands_item__rNoXk {
+  background: #fff;
+  border: 1px solid #EADFD4;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(234, 223, 212, 0.4);
+}
+
+.Errands_done__IKC6y {
+  opacity: 0.5;
+}
+
+.Errands_row__nLxHK {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.Errands_itemTitle__rXpbn {
+  font-size: 15px;
+  font-weight: 600;
+  color: #553924;
+}
+
+.Errands_due__cS_uT {
+  font-size: 13px;
+  margin-top: 4px;
+  color: #8C7A6B; 
+}
+
+/* 状態色 */
+.Errands_expired__kOUR1 {
+  color: #C75B4A;
+  font-weight: 700;
+}
+
+.Errands_today__BXngf {
+  color: #A0743C;
+  font-weight: 700;
+}
+
+.Errands_normal__4iDPk {
+  color: #8C7A6B; 
+}

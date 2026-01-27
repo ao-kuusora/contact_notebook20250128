@@ -1,0 +1,153 @@
+/*!******************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[7].use[3]!./app/dashboard/Dashboard.module.css ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************/
+/* 全体 */
+.Dashboard_container__9yvCN {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  font-family: "Zen Maru Gothic", sans-serif;
+  color: #4A3F35;
+}
+
+/* Loading */
+.Dashboard_loading__b_akr {
+  padding: 24px;
+  text-align: center;
+  color: #8C7A6B;
+}
+
+.Dashboard_loadingWrapper__Jj2YX {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: Dashboard_fadeIn__xq84O 0.3s ease-out;
+}
+
+.Dashboard_loadingText__Fk8kd {
+  margin-top: 20px;
+  color: #F5EDE4;
+  font-size: 14px;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+
+/* Header */
+.Dashboard_header__UvhBz {
+  margin-bottom: 24px;
+}
+
+.Dashboard_title__2kcaX {
+  font-size: 24px;
+  font-weight: 700;
+  color: #553924;
+}
+
+.Dashboard_subtitle__Y7Wox {
+  margin-top: 4px;
+  color: #8C7A6B;
+  font-size: 14px;
+}
+
+/* List */
+.Dashboard_panelList__PykFG {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Card */
+.Dashboard_card__jHhv8 {
+  background: #fff;
+  border: 1px solid #EADFD4;
+  border-radius: 16px;
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 4px 12px rgba(234, 223, 212, 0.5);
+  transition: background 0.2s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.Dashboard_card__jHhv8:hover {
+  background: #F9F4EF;
+  transform: translateY(-2px);
+}
+
+.Dashboard_cardTitle__zllF0 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #8B5E3C;
+}
+
+.Dashboard_cardText__LGca3 {
+  font-size: 14px;
+  color: #4A3F35;
+}
+
+.Dashboard_cardEmpty___NX1S {
+  font-size: 14px;
+  color: #B8AFA7;
+}
+
+.Dashboard_cardAlert__LEfom {
+  font-size: 14px;
+  color: #C75B4A;
+  font-weight: 600;
+}
+
+/* Badge */
+.Dashboard_badge__da52H {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 12px;
+  height: 12px;
+  background: #D28A6A;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(210, 138, 106, 0.6);
+}
+
+/* Couple Box */
+.Dashboard_coupleBox__XtT9_ {
+  margin-top: 8px;
+  padding: 16px;
+  border: 1px solid #F1E3D8;
+  border-radius: 14px;
+  background: #FBF6F1;
+}
+
+.Dashboard_coupleId__j9pZM {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+  color: #8B5E3C;
+}
+
+/* Buttons */
+.Dashboard_copyButton__zoapx,
+.Dashboard_createButton__Gfyey {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: #8B5E3C;
+  color: white;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  width: 100%;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.Dashboard_copyButton__zoapx:hover,
+.Dashboard_createButton__Gfyey:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}

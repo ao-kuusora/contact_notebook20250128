@@ -1,0 +1,53 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 48px;
+  width: 100%;
+  background: #FBF6F1; 
+  border-bottom: 1px solid #EADFD4; 
+  display: flex;
+  align-items: center;
+  z-index: 50;
+}
+
+/* 左右のボタン領域 */
+.side {
+  width: 90px;
+  display: flex;
+  justify-content: flex-start;
+  padding-right: 12px;
+  white-space: nowrap;
+  padding: 10px;
+}
+
+/* 中央タイトル領域 */
+.center {
+  flex: 1;
+  text-align: center;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  color: #553924; /* 落ち着いたブラウン */
+}
+
+/* 戻るボタン */
+.back {
+  font-size: 18px;
+  background: none;
+  border: none;
+  color: #8B5E3C; /* ブラウンアクセント */
+  cursor: pointer;
+}
+
+/* ログアウトボタン */
+.logout {
+  font-size: 14px;
+  background: none;
+  border: none;
+  color: #C75B4A; /* 赤茶で柔らかく */
+  cursor: pointer;
+}

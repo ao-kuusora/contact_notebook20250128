@@ -1,0 +1,100 @@
+/* ============================
+   画面全体
+============================ */
+.screen {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #FBF6F1;
+  padding: 24px;
+}
+
+/* ============================
+   カード
+============================ */
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(234, 223, 212, 0.5);
+  border: 1px solid #EADFD4;
+}
+
+/* ============================
+   タイトル
+============================ */
+.title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-align: center;
+  color: #553924;
+}
+
+/* ============================
+   フォーム
+============================ */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 入力欄 */
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #D8CFC7;
+  border-radius: 10px;
+  font-size: 1rem;
+  background: #FFF9F4;
+  color: #4A3F35;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus {
+  border-color: #8B5E3C;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(139, 94, 60, 0.2);
+}
+
+/* ============================
+   ボタン
+============================ */
+.button {
+  width: 100%;
+  padding: 12px;
+  background:#8B5E3C;
+  color: white;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* ============================
+   メッセージ
+============================ */
+.error {
+  margin-top: 16px;
+  color: #C75B4A;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.success {
+  margin-top: 16px;
+  color: #8B5E3C;
+  font-size: 0.9rem;
+  text-align: center;
+}

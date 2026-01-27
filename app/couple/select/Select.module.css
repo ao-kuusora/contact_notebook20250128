@@ -1,0 +1,73 @@
+/* ============================
+   画面全体
+============================ */
+.screen {
+  padding: 40px;
+  text-align: center;
+  background: #FBF6F1;
+  min-height: 100vh;
+}
+
+/* ============================
+   タイトル
+============================ */
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #553924;
+  margin-top: 90px;
+}
+
+.subtitle {
+  margin-bottom: 20px;
+  color: #8C7A6B;
+  text-align: left;
+  line-height: 1.8;
+}
+
+.subtitle:first-of-type{
+  margin-top: 80px;
+}
+
+.subtitle:last-of-type {
+  margin-bottom: 80px;
+}
+
+
+/* ============================
+   ボタンエリア
+============================ */
+.buttons {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ============================
+   ボタン（作成 / 参加）
+============================ */
+.create,
+.join {
+  padding: 12px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* 作成ボタン　*/
+.create {
+  background: #8B5E3C;
+}
+
+/* 参加ボタン */
+.join {
+  background: #A0743C;
+}
+
+.create:hover,
+.join:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}

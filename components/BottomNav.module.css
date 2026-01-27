@@ -1,0 +1,24 @@
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 60px;
+  width: 100%;
+  background: #FBF6F1; /* ミルクティー色 */
+  border-top: 1px solid #EADFD4;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 50;
+}
+
+.item {
+  font-size: 14px;
+  color: #8C7A6B; /* 柔らかいブラウン */
+  text-decoration: none;
+}
+
+.active {
+  color: #8B5E3C; /* ブラウンアクセント */
+  font-weight: 600;
+}

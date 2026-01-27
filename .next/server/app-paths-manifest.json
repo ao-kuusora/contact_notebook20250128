@@ -1,0 +1,14 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/couple/select/page": "app/couple/select/page.js",
+  "/diary/page": "app/diary/page.js",
+  "/couple/join/page": "app/couple/join/page.js",
+  "/diary/[id]/page": "app/diary/[id]/page.js",
+  "/api/unread/route": "app/api/unread/route.js",
+  "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/api/entries/route": "app/api/entries/route.js",
+  "/api/entries/[id]/route": "app/api/entries/[id]/route.js",
+  "/api/read/route": "app/api/read/route.js"
+}

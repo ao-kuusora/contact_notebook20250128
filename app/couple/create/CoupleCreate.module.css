@@ -1,0 +1,91 @@
+/* ============================
+   画面全体
+============================ */
+.screen {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #FBF6F1;
+  padding: 24px;
+}
+
+/* ============================
+   カード
+============================ */
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(234, 223, 212, 0.5);
+  border: 1px solid #EADFD4;
+}
+
+/* ============================
+   タイトル
+============================ */
+.title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-align: center;
+  color: #553924;
+}
+
+/* ============================
+   ボタン
+============================ */
+.button {
+  width: 100%;
+  padding: 12px;
+  background: #8B5E3C;
+  color: white;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* ============================
+   招待コードボックス
+============================ */
+.inviteBox {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #EADFD4;
+  border-radius: 12px;
+  background: #FFF9F4;
+}
+
+.inviteLabel {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #6B5A4A;
+}
+
+.inviteCode {
+  font-size: 1.4rem;
+  margin-top: 8px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #553924;
+}
+
+/* ============================
+   エラー
+============================ */
+.error {
+  margin-top: 16px;
+  color: #C75B4A;
+  font-size: 0.9rem;
+  text-align: center;
+}

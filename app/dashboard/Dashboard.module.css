@@ -1,0 +1,150 @@
+/* 全体 */
+.container {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  font-family: "Zen Maru Gothic", sans-serif;
+  color: #4A3F35;
+}
+
+/* Loading */
+.loading {
+  padding: 24px;
+  text-align: center;
+  color: #8C7A6B;
+}
+
+.loadingWrapper {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.loadingText {
+  margin-top: 20px;
+  color: #F5EDE4;
+  font-size: 14px;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+
+/* Header */
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #553924;
+}
+
+.subtitle {
+  margin-top: 4px;
+  color: #8C7A6B;
+  font-size: 14px;
+}
+
+/* List */
+.panelList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Card */
+.card {
+  background: #fff;
+  border: 1px solid #EADFD4;
+  border-radius: 16px;
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 4px 12px rgba(234, 223, 212, 0.5);
+  transition: background 0.2s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.card:hover {
+  background: #F9F4EF;
+  transform: translateY(-2px);
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #8B5E3C;
+}
+
+.cardText {
+  font-size: 14px;
+  color: #4A3F35;
+}
+
+.cardEmpty {
+  font-size: 14px;
+  color: #B8AFA7;
+}
+
+.cardAlert {
+  font-size: 14px;
+  color: #C75B4A;
+  font-weight: 600;
+}
+
+/* Badge */
+.badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 12px;
+  height: 12px;
+  background: #D28A6A;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(210, 138, 106, 0.6);
+}
+
+/* Couple Box */
+.coupleBox {
+  margin-top: 8px;
+  padding: 16px;
+  border: 1px solid #F1E3D8;
+  border-radius: 14px;
+  background: #FBF6F1;
+}
+
+.coupleId {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+  color: #8B5E3C;
+}
+
+/* Buttons */
+.copyButton,
+.createButton {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: #8B5E3C;
+  color: white;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  width: 100%;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.copyButton:hover,
+.createButton:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
