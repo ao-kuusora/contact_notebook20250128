@@ -35,13 +35,12 @@ export async function POST(req: Request) {
       },
     });
 
-    res.cookies.set("session", token, {
-      httpOnly: true,
-      secure: true,
-      path: "/",
-      // 7日
-      maxAge: 60 * 60 * 24 * 7, 
-    });
+res.cookies.set("session", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV == "production",
+  path: "/",
+  maxAge: 60 * 60 * 24 * 7,
+});
 
     return res;
   } catch (e) {

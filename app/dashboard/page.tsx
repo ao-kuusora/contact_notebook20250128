@@ -90,7 +90,7 @@ export default function DashboardPage() {
     fetchUser();
   }, []);
 
-  //各カテゴリの未読バッジ判定（自分の投稿なら消す）
+  //各カテゴリの未読バッジ判定
   const choresUnread =
     unread.chores && latestChore && !latestChore.isMine;
 
@@ -114,7 +114,6 @@ export default function DashboardPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        {/* ★ タイトルを今日の日付に変更 */}
         <h1 className={styles.title}>{today}</h1>
         <p className={styles.subtitle}>{user.displayName} さん</p>
       </div>

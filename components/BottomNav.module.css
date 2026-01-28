@@ -4,7 +4,7 @@
   left: 0;
   height: 60px;
   width: 100%;
-  background: #FBF6F1; /* ミルクティー色 */
+  background: #FBF6F1;
   border-top: 1px solid #EADFD4;
   display: flex;
   justify-content: space-around;
@@ -14,11 +14,11 @@
 
 .item {
   font-size: 14px;
-  color: #8C7A6B; /* 柔らかいブラウン */
+  color: #8C7A6B;
   text-decoration: none;
 }
 
 .active {
-  color: #8B5E3C; /* ブラウンアクセント */
+  color: #8B5E3C;
   font-weight: 600;
 }

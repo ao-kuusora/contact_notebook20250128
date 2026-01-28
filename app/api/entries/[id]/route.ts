@@ -42,7 +42,7 @@ export async function GET(
       entry: {
         ...entry,
         isMine: entry.userId == user.id,
-        authorName: entry.user.displayName, // ★ ここも displayName
+        authorName: entry.user.displayName,
       },
     });
   } catch (e) {

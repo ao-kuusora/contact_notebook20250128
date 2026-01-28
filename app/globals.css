@@ -15,15 +15,15 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #ededed;/* app/globals.css */
+    --foreground: #ededed;
 
 /* 全体背景 */
 body {
   background: #fafafa;
   color: #111;
   font-family: "Inter", sans-serif;
-  padding-top: 48px; /* ← TopBar の高さと一致させる */
-  padding-bottom: 56px; /* ← BottomNav の高さと一致させる */
+  padding-top: 48px;
+  padding-bottom: 56px;
 }
 
 /* カード */

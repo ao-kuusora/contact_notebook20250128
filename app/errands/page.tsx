@@ -26,7 +26,6 @@ export default function ErrandsPage() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    //空白は登録できない
     if (!content.trim()) {
       alert("内容を入力してください");
       return;
@@ -99,7 +98,7 @@ export default function ErrandsPage() {
       {/* 一覧 */}
       <div className={styles.list}>
 
-        {/* チェック済みは表示しない */}
+        {/* チェック済みは非表示 */}
         {entries
           .filter((e) => !e.done)
           .map((e) => {

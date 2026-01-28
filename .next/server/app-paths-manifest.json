@@ -1,6 +1,10 @@
 {
   "/dashboard/page": "app/dashboard/page.js",
+  "/register/page": "app/register/page.js",
+  "/login/page": "app/login/page.js",
+  "/diary/page": "app/diary/page.js",
   "/api/unread/route": "app/api/unread/route.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
   "/api/auth/me/route": "app/api/auth/me/route.js",
   "/api/entries/route": "app/api/entries/route.js"
 }

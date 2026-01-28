@@ -18,7 +18,7 @@ model User {
   createdAt    DateTime @default(now())
 
   entries    Entry[]
-  readStatus ReadStatus[] // ★ 追加
+  readStatus ReadStatus[] //追加
 }
 
 model Couple {
@@ -50,11 +50,11 @@ model ReadStatus {
   id      String   @id @default(cuid())
   entryId String
   userId  String
-  isRead  Boolean  @default(false)   // ★ 必須
+  isRead  Boolean  @default(false)
   readAt  DateTime @default(now())
 
   entry Entry @relation(fields: [entryId], references: [id])
   user  User  @relation(fields: [userId], references: [id])
 
-  @@unique([entryId, userId])        // ★ これも必須
+  @@unique([entryId, userId])
 }

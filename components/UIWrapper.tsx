@@ -7,7 +7,7 @@ import BottomNav from "@/components/BottomNav";
 export default function UIWrapper({ children }) {
   const pathname = usePathname();
 
-  //UIを隠したいページをまとめて管理（フルパスで書く）
+  //UIを隠したいページ
   const hideUIRoutes = [
     "/login",
     "/register",
