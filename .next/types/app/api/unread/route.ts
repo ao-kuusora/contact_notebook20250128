@@ -1,4 +1,4 @@
-// File: C:\Users\aokuu\同棲交換日記\app\api\unread\route.ts
+// File: C:\Users\aokuu\contact_notebook20250128\app\api\unread\route.ts
 import * as entry from '../../../../../app/api/unread/route.js'
 import type { NextRequest } from 'next/server.js'
 

@@ -1,4 +1,4 @@
-// File: C:\Users\aokuu\同棲交換日記\app\api\auth\me\route.ts
+// File: C:\Users\aokuu\contact_notebook20250128\app\api\auth\me\route.ts
 import * as entry from '../../../../../../app/api/auth/me/route.js'
 import type { NextRequest } from 'next/server.js'
 
