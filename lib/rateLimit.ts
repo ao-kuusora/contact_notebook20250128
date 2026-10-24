@@ -11,9 +11,9 @@ export function rateLimit(key: string, limit: number, windowMs: number): boolean
   const now = Date.now();
 
   if (hits.size > 5000) {
-    for (const [k, v] of hits) {
+    hits.forEach((v, k) => {
       if (v.resetAt < now) hits.delete(k);
-    }
+    });
   }
 
   const hit = hits.get(key);
