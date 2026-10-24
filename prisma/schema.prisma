@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -44,6 +44,8 @@ model Entry {
   couple Couple @relation(fields: [coupleId], references: [id])
 
   readStatus ReadStatus[]
+
+  @@index([coupleId, type, createdAt])
 }
 
 model ReadStatus {

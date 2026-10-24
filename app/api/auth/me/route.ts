@@ -1,34 +1,35 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import jwt from "jsonwebtoken";
+import { getCurrentUser } from "@/lib/auth";
 
-const SECRET = process.env.JWT_SECRET!;
-
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    const cookie = req.headers.get("cookie") ?? "";
-    const token = cookie
-      .split("; ")
-      .find((c) => c.startsWith("session="))
-      ?.split("=")[1];
-
-    if (!token) {
+    const me = await getCurrentUser();
+    if (!me) {
       return NextResponse.json({ user: null });
     }
 
-    const payload = jwt.verify(token, SECRET) as { userId: string };
-
+    // passwordHash などをブラウザへ返さないよう、必要な項目だけ select する
     const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
-      include: {
+      where: { id: me.id },
+      select: {
+        id: true,
+        email: true,
+        displayName: true,
+        iconUrl: true,
+        coupleId: true,
+        createdAt: true,
         couple: {
-          include: {
-            users: true,
+          select: {
+            id: true,
+            inviteCode: true,
+            users: {
+              select: { id: true, displayName: true, iconUrl: true },
+            },
           },
         },
       },
     });
-
 
     return NextResponse.json({ user });
   } catch (err) {

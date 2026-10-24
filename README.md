@@ -17,49 +17,70 @@
 - 家事報告  
   洗濯・洗い物など家事報告をワンクリックで可能
 
-- おつかいメモ
+- おつかいメモ  
   買わなきゃいけないものを期限付きで共有
 
-- 仕事の忙しさ 
+- 仕事の忙しさ  
   お互いの仕事の忙しさを共有することで疲労具合の把握、スケジュール調整に役に立つ
 
-- 交換日記
+- 交換日記  
   お互いの気持ちを思うままに綴って残そう
 
-
+---
 
 ## Tech Stack（技術構成）
 
-Framework：Next.js (App Router)
-Language：TypeScript
-Styling：CSS Modules / Tailwind（必要に応じて）
-DatabasePri：sma + SQLite（または任意のDB）
-Auth：JWT（ローカル運用前提）
+- Framework：Next.js (App Router)
+- Language：TypeScript
+- Styling：CSS Modules / Tailwind（必要に応じて）
+- Database：Prisma + SQLite（Prisma が対応する他のDBも可）
+- Auth：JWT（httpOnly Cookie、ローカル運用前提）
 
+---
 
 ## Getting Started（ローカル起動）
 
 ### 1. 依存関係のインストール
+
+```bash
 npm install
+```
 
-### 2. Prisma のセットアップ
-npx prisma generate npx prisma migrate dev
+### 2. 環境変数の設定
 
-### 3. 開発サーバー起動
+```bash
+cp .env.example .env
+cp .env.example .env.local
+```
+
+`JWT_SECRET` は十分に長いランダム文字列に変更してください。  
+（`.env` は Prisma CLI 用、`.env.local` は Next.js 用です）
+
+### 3. Prisma のセットアップ
+
+```bash
+npx prisma generate
+npx prisma migrate dev
+```
+
+### 4. 開発サーバー起動
+
+```bash
 npm run dev
+```
 
-ブラウザで  
-`http://localhost:3000`  
-にアクセス。
+ブラウザで `http://localhost:3000` にアクセス。
 
 ---
 
 ## Environment Variables（環境変数）
 
-`.env.local` を作成して以下を設定：
-DATABASE_URL="file:./dev.db" JWT_SECRET="your-secret-key"
+| 変数 | 説明 | 例 |
+| --- | --- | --- |
+| `DATABASE_URL` | DB の接続先 | `file:./dev.db` |
+| `JWT_SECRET` | セッション署名用の秘密鍵 | 長いランダム文字列 |
 
-※ `.env.local` は **GitHub に公開しないでください**
+※ `.env` / `.env.local` / `*.db` は **GitHub に公開しないでください**（`.gitignore` 済み）
 
 ---
 
@@ -75,10 +96,3 @@ MIT License
 このプロジェクトは、  
 **「共同生活を送る2人がすこしだけ快適になるアプリケーション」**  
 というコンセプトで設計されています。
-
-
-
-
-
-
-

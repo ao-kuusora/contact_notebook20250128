@@ -1,38 +1,47 @@
 import { NextResponse } from "next/server";
+import { randomBytes } from "crypto";
 import { prisma } from "@/lib/prisma";
-import jwt from "jsonwebtoken";
+import { getCurrentUser } from "@/lib/auth";
 
 function generateInviteCode() {
-  return Math.random().toString(36).substring(2, 10).toUpperCase();
+  // 暗号論的乱数 (Math.random は推測されうるため使わない)
+  return randomBytes(5).toString("hex").toUpperCase(); // 例: "A3F09C1B72"
 }
 
-export async function POST(req: Request) {
+export async function POST() {
   try {
-    const token = req.headers.get("cookie")?.split("session=")[1];
-    if (!token) return NextResponse.json({ error: "未ログイン" }, { status: 401 });
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: "未ログイン" }, { status: 401 });
 
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
-
-    let inviteCode = generateInviteCode();
-
-    while (await prisma.couple.findUnique({ where: { inviteCode } })) {
-      inviteCode = generateInviteCode();
+    // すでに連絡帳に参加している場合は、新しく作らず既存のコードを返す
+    if (user.coupleId) {
+      const existing = await prisma.couple.findUnique({
+        where: { id: user.coupleId },
+        select: { inviteCode: true },
+      });
+      if (existing) {
+        return NextResponse.json({ inviteCode: existing.inviteCode });
+      }
     }
 
-    const couple = await prisma.couple.create({
-      data: {
-        inviteCode,
-        users: { connect: { id: payload.userId } },
-      },
-    });
+    for (let i = 0; i < 5; i++) {
+      const inviteCode = generateInviteCode();
 
-    await prisma.user.update({
-      where: { id: payload.userId },
-      data: { coupleId: couple.id },
-    });
+      const taken = await prisma.couple.findUnique({ where: { inviteCode } });
+      if (taken) continue;
 
-    return NextResponse.json({ inviteCode });
+      // connect で user.coupleId も同時に設定される
+      await prisma.couple.create({
+        data: {
+          inviteCode,
+          users: { connect: { id: user.id } },
+        },
+      });
 
+      return NextResponse.json({ inviteCode });
+    }
+
+    return NextResponse.json({ error: "連絡帳の作成に失敗しました" }, { status: 500 });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: "連絡帳の作成に失敗しました" }, { status: 500 });

@@ -1,64 +1,40 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
 
-export async function GET(req: Request) {
-  const cookie = req.headers.get("cookie") || "";
+const NONE = { chores: false, errands: false, workload: false, diary: false };
 
-const userRes = await fetch("http://localhost:3000/api/auth/me", {
-  headers: { cookie },
-});
+export async function GET() {
+  try {
+    const user = await getCurrentUser();
+    if (!user || !user.coupleId) {
+      return NextResponse.json(NONE);
+    }
 
-  const userData = await userRes.json();
-  const user = userData.user;
-
-  if (!user) {
-    return NextResponse.json({ chores: false, errands: false, workload: false, diary: false });
-  }
-
-  const unreadChores = await prisma.entry.count({
-    where: {
-      type: "CHORE",
-      readStatus: {
-        none: { userId: user.id, isRead: true },
-      },
-    },
-  });
-
-  const unreadErrands = await prisma.entry.count({
-    where: {
-      type: "ERRAND",
-      readStatus: {
-        none: { userId: user.id, isRead: true },
-      },
-    },
-  });
-
-  const unreadWorkload = await prisma.entry.count({
-    where: {
-      type: "WORKLOAD",
-      readStatus: {
-        none: { userId: user.id, isRead: true },
-      },
-    },
-  });
-
-  const unreadDiary = await prisma.entry.count({
-    where: {
-      type: "DIARY",
-      userId: { not: user.id }, // 自分の投稿は未読にしない
-      readStatus: {
-        none: {
-          userId: user.id,
-          isRead: true,
+    // 自分のカップルの、パートナーが書いた未読の投稿を種別ごとに集計 (1クエリ)
+    const grouped = await prisma.entry.groupBy({
+      by: ["type"],
+      where: {
+        coupleId: user.coupleId,
+        userId: { not: user.id }, // 自分の投稿は未読にしない
+        readStatus: {
+          none: { userId: user.id, isRead: true },
         },
       },
-    },
-  });
+      _count: { _all: true },
+    });
 
-  return NextResponse.json({
-    chores: unreadChores > 0,
-    errands: unreadErrands > 0,
-    workload: unreadWorkload > 0,
-    diary: unreadDiary > 0,
-  });
+    const has = (type: string) =>
+      grouped.some((g) => g.type === type && g._count._all > 0);
+
+    return NextResponse.json({
+      chores: has("CHORE"),
+      errands: has("ERRAND"),
+      workload: has("WORKLOAD"),
+      diary: has("DIARY"),
+    });
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json(NONE);
+  }
 }

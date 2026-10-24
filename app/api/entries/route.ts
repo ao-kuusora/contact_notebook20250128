@@ -1,27 +1,44 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import jwt from "jsonwebtoken";
+import { getCurrentUser } from "@/lib/auth";
 import { Prisma } from "@prisma/client";
+import { isEntryType, isNonEmptyString, MAX_CONTENT_LENGTH } from "@/lib/validate";
 
 export async function POST(req: Request) {
   try {
-    const token = req.headers.get("cookie")?.split("session=")[1];
-    if (!token) return NextResponse.json({ error: "未ログイン" }, { status: 401 });
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: "未ログイン" }, { status: 401 });
 
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
-
-    const user = await prisma.user.findUnique({ where: { id: payload.userId } });
-    if (!user || !user.coupleId) {
+    if (!user.coupleId) {
       return NextResponse.json({ error: "連絡帳に参加していません" }, { status: 403 });
     }
 
-    const { type, content, dueDate } = await req.json();
+    const body = await req.json().catch(() => null);
+    const { type, content, dueDate } = body ?? {};
+
+    if (!isEntryType(type)) {
+      return NextResponse.json({ error: "type が不正です" }, { status: 400 });
+    }
+    if (!isNonEmptyString(content, MAX_CONTENT_LENGTH)) {
+      return NextResponse.json(
+        { error: `内容は1〜${MAX_CONTENT_LENGTH}文字で入力してください` },
+        { status: 400 }
+      );
+    }
+
+    let due: Date | null = null;
+    if (dueDate) {
+      due = new Date(dueDate);
+      if (Number.isNaN(due.getTime())) {
+        return NextResponse.json({ error: "期限の日付が不正です" }, { status: 400 });
+      }
+    }
 
     const entry = await prisma.entry.create({
       data: {
         type,
         content,
-        dueDate: dueDate ? new Date(dueDate) : null,
+        dueDate: due,
         done: false,
         userId: user.id,
         coupleId: user.coupleId,
@@ -37,12 +54,7 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const token = req.headers.get("cookie")?.split("session=")[1];
-    if (!token) return NextResponse.json({ entries: [] });
-
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
-
-    const user = await prisma.user.findUnique({ where: { id: payload.userId } });
+    const user = await getCurrentUser();
     if (!user || !user.coupleId) {
       return NextResponse.json({ entries: [] });
     }
@@ -53,19 +65,19 @@ export async function GET(req: Request) {
 
     let dateFilter = {};
 
-    if (date) {
-      const start = new Date(date);
-      start.setHours(0, 0, 0, 0);
+    // date は "YYYY-MM-DD"。サーバーのタイムゾーンに依存しないよう JST の1日で絞る
+    if (date && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      const start = new Date(`${date}T00:00:00.000+09:00`);
+      const end = new Date(`${date}T23:59:59.999+09:00`);
 
-      const end = new Date(date);
-      end.setHours(23, 59, 59, 999);
-
-      dateFilter = {
-        createdAt: {
-          gte: start,
-          lte: end,
-        },
-      };
+      if (!Number.isNaN(start.getTime())) {
+        dateFilter = {
+          createdAt: {
+            gte: start,
+            lte: end,
+          },
+        };
+      }
     }
 
     // 全部新しい順に統一
@@ -80,17 +92,17 @@ export async function GET(req: Request) {
       orderBy: order,
       include: {
         user: {
-          select: { displayName: true }, //displayName のみ取得
+          select: { displayName: true }, // displayName のみ取得
         },
         readStatus: true,
       },
     });
 
-    //authorName を追加して返す
+    // authorName を追加して返す
     const result = entries.map((e) => ({
       ...e,
-      isMine: e.userId == user.id,
-      authorName: e.user.displayName, //DiaryPage で使う
+      isMine: e.userId === user.id,
+      authorName: e.user.displayName, // DiaryPage で使う
     }));
 
     return NextResponse.json({ entries: result });

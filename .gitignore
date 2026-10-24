@@ -1,8 +1,23 @@
-node_modules
-# Keep environment variables out of version control
+# dependencies
 node_modules/
+
+# Next.js build output / cache
+.next/
+out/
+*.tsbuildinfo
+
+# Keep environment variables out of version control
 .env
-.env.local
+.env.*
+!.env.example
+*.bak
+
+# Local SQLite database
+*.db
+*.db-journal
 
 # Prisma generated files
 prisma/generated/
+
+# OS
+.DS_Store

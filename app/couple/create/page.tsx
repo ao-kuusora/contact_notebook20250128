@@ -13,8 +13,9 @@ export default function CoupleCreatePage() {
       const res = await fetch("/api/auth/me", { cache: "no-store" });
       const data = await res.json();
 
-      if (data.user?.coupleId) {
-        setInviteCode(data.user.coupleId);
+      // 内部ID(coupleId)ではなく、パートナーに伝える招待コードを表示する
+      if (data.user?.couple?.inviteCode) {
+        setInviteCode(data.user.couple.inviteCode);
       }
     }
 

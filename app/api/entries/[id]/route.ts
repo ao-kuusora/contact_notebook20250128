@@ -1,23 +1,17 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import jwt from "jsonwebtoken";
+import { getCurrentUser } from "@/lib/auth";
 
 // GET
 export async function GET(
-  req: Request,
+  _req: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const token = req.headers.get("cookie")?.split("session=")[1];
-    if (!token) return NextResponse.json({ error: "未ログイン" }, { status: 401 });
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: "未ログイン" }, { status: 401 });
 
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
-
-    const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
-    });
-
-    if (!user || !user.coupleId) {
+    if (!user.coupleId) {
       return NextResponse.json({ error: "連絡帳に参加していません" }, { status: 403 });
     }
 
@@ -25,23 +19,21 @@ export async function GET(
       where: { id: params.id },
       include: {
         user: {
-          select: { displayName: true }, //displayNameを取得
+          select: { displayName: true },
         },
         readStatus: true,
       },
     });
 
-
-
-    // 存在しない or 他カップルの日記
-    if (!entry || entry.coupleId != user.coupleId) {
+    // 存在しない or 他カップルの投稿
+    if (!entry || entry.coupleId !== user.coupleId) {
       return NextResponse.json({ error: "アクセス権がありません" }, { status: 403 });
     }
 
     return NextResponse.json({
       entry: {
         ...entry,
-        isMine: entry.userId == user.id,
+        isMine: entry.userId === user.id,
         authorName: entry.user.displayName,
       },
     });
@@ -51,24 +43,35 @@ export async function GET(
   }
 }
 
-// PATCH
+// PATCH (完了フラグの更新)
 export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const token = req.headers.get("cookie")?.split("session=")[1];
-    if (!token) return NextResponse.json({ error: "未ログイン" }, { status: 401 });
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: "未ログイン" }, { status: 401 });
 
-    jwt.verify(token, process.env.JWT_SECRET!);
+    if (!user.coupleId) {
+      return NextResponse.json({ error: "連絡帳に参加していません" }, { status: 403 });
+    }
 
-    const { done } = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body.done !== "boolean") {
+      return NextResponse.json({ error: "done は true / false で指定してください" }, { status: 400 });
+    }
 
-    const entry = await prisma.entry.update({
-      where: { id: params.id },
-      data: { done },
+    // 自分のカップルの投稿だけ更新できるようにする
+    const result = await prisma.entry.updateMany({
+      where: { id: params.id, coupleId: user.coupleId },
+      data: { done: body.done },
     });
 
+    if (result.count === 0) {
+      return NextResponse.json({ error: "見つかりません" }, { status: 404 });
+    }
+
+    const entry = await prisma.entry.findUnique({ where: { id: params.id } });
     return NextResponse.json({ entry });
   } catch (e) {
     console.error(e);
