@@ -33,7 +33,7 @@
 - Framework：Next.js (App Router)
 - Language：TypeScript
 - Styling：CSS Modules / Tailwind（必要に応じて）
-- Database：Prisma + SQLite（Prisma が対応する他のDBも可）
+- Database：Prisma + PostgreSQL
 - Auth：JWT（httpOnly Cookie、ローカル運用前提）
 
 ---
@@ -56,10 +56,12 @@ cp .env.example .env.local
 `JWT_SECRET` は十分に長いランダム文字列に変更してください。  
 （`.env` は Prisma CLI 用、`.env.local` は Next.js 用です）
 
-### 3. Prisma のセットアップ
+### 3. データベースの起動とマイグレーション
+
+PostgreSQL をローカルで起動します（Docker が使えない場合は、手元の PostgreSQL に合わせて `DATABASE_URL` を変更してください）。
 
 ```bash
-npx prisma generate
+docker compose up -d
 npx prisma migrate dev
 ```
 
@@ -77,10 +79,24 @@ npm run dev
 
 | 変数 | 説明 | 例 |
 | --- | --- | --- |
-| `DATABASE_URL` | DB の接続先 | `file:./dev.db` |
+| `DATABASE_URL` | PostgreSQL の接続文字列 | `postgresql://postgres:postgres@localhost:5432/contact_notebook` |
 | `JWT_SECRET` | セッション署名用の秘密鍵 | 長いランダム文字列 |
 
 ※ `.env` / `.env.local` / `*.db` は **GitHub に公開しないでください**（`.gitignore` 済み）
+
+---
+
+## Deploy（本番公開）
+
+1. Neon / Supabase / Render などで PostgreSQL を用意し、接続文字列を控える
+2. Vercel などにリポジトリを接続し、環境変数 `DATABASE_URL` と `JWT_SECRET` を設定する
+3. 本番DBにテーブルを作る（手元から1回実行）
+
+```bash
+DATABASE_URL="<本番の接続文字列>" npx prisma migrate deploy
+```
+
+※ Neon / Supabase の接続プーラーを使う場合は、マイグレーション用に直結URL（`directUrl`）が必要になることがあります。
 
 ---
 
