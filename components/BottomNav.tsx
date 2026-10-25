@@ -11,6 +11,7 @@ export default function BottomNav() {
     { href: "/chores", label: "家事" },
     { href: "/errands", label: "おつかい" },
     { href: "/tasks", label: "タスク" },
+    { href: "/health", label: "体調" },
     { href: "/dashboard", label: "ホーム" },
     { href: "/workload", label: "忙しさ" },
     { href: "/diary", label: "日記" },
