@@ -104,3 +104,24 @@
     font-size: 13px;
   }
 }
+
+/* PCでは入力フォームと体調グラフを横並びにし、スマホでは縦並び */
+.desktopLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+}
+@media (min-width: 1000px) {
+  .desktopLayout {
+    grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+    gap: 28px;
+  }
+  .desktopLayout > .history {
+    margin-top: 0;
+    min-width: 0;
+  }
+  .desktopLayout > .card {
+    min-width: 0;
+  }
+}
