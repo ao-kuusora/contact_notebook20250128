@@ -97,6 +97,7 @@ export default function HealthPage() {
         <p className={styles.description}>無理せず、今の自分の状態をふたりで共有しよう。</p>
       </header>
 
+      <div className={styles.desktopLayout}>
       <section className={styles.card} aria-labelledby="report-title">
         <h2 id="report-title" className={styles.sectionTitle}>今日の状態を教えてね</h2>
         <fieldset className={styles.fieldset}>
@@ -175,6 +176,7 @@ export default function HealthPage() {
             );
           })}
       </section>
+      </div>
     </main>
   );
 }
