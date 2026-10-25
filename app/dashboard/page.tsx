@@ -120,6 +120,12 @@ export default function DashboardPage() {
           )}
         </Link>
 
+        {/* タスク */}
+        <Link href="/tasks" className={styles.card}>
+          <h2 className={styles.cardTitle}>ふたりのタスク</h2>
+          <p className={styles.cardEmpty}>2人でやること・忘れたくない用事を確認</p>
+        </Link>
+
         {/* 忙しさ */}
         <Link href="/workload" className={styles.card}>
           <h2 className={styles.cardTitle}>
