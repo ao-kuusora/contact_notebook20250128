@@ -8,6 +8,20 @@ import type { EntryDTO } from "@/lib/types";
 import { useMarkRead } from "@/lib/useEntry";
 import { MAX_CONTENT_LENGTH } from "@/lib/validate";
 
+type DiaryEntry = {
+  id: string;
+  content: string;
+  isMine: boolean;
+  authorName: string;
+  createdAt: string;
+  iconUrl?: string | null;
+};
+
+type ApiError = {
+  error?: string;
+  message?: string;
+};
+
 export default function DiaryPage() {
   const [entries, setEntries] = useState<EntryDTO[]>([]);
   useMarkRead(entries);
@@ -68,6 +82,15 @@ export default function DiaryPage() {
       content,
       dueDate: null,
     });
+    const data = (await res.json().catch(() => ({}))) as {
+      entries?: DiaryEntry[];
+      error?: string;
+      message?: string;
+    };
+
+    if (!res.ok) {
+      throw new Error(data.error || data.message || "日記の読み込みに失敗しました。");
+    }
 
     setPosting(false);
 
@@ -110,6 +133,7 @@ export default function DiaryPage() {
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
           className={styles.dateInput}
+          aria-label="検索する日付"
         />
         <button onClick={searchByDate} className={styles.searchButton}>
           日付で検索
@@ -120,6 +144,17 @@ export default function DiaryPage() {
           </button>
         )}
       </div>
+
+      {errorMessage && (
+        <p role="alert" className={styles.errorMessage}>
+          {errorMessage}
+        </p>
+      )}
+      {noticeMessage && (
+        <p role="status" className={styles.noticeMessage}>
+          {noticeMessage}
+        </p>
+      )}
 
       <div className={styles.page}>
         {loadError ? (
@@ -139,11 +174,11 @@ export default function DiaryPage() {
             {activeDate ? "この日の日記はありません" : "まだ日記がありません"}
           </p>
         ) : (
-          entries.map((e) => (
+          entries.map((entry) => (
             <div
-              key={e.id}
+              key={entry.id}
               className={`${styles.diaryEntry} ${
-                e.isMine ? styles.mine : styles.theirs
+                entry.isMine ? styles.mine : styles.theirs
               }`}
             >
               <Link href={`/diary/${e.id}`} className={styles.link}>
@@ -153,7 +188,7 @@ export default function DiaryPage() {
               <div className={styles.meta}>
                 <span className={styles.author}>{e.authorName}</span>
                 <span className={styles.date}>
-                  {new Date(e.createdAt).toLocaleString()}
+                  {new Date(entry.createdAt).toLocaleString()}
                 </span>
               </div>
             </div>
@@ -178,7 +213,12 @@ export default function DiaryPage() {
           maxLength={MAX_CONTENT_LENGTH}
           placeholder="今日の気持ちを書こう"
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => {
+            setContent(e.target.value);
+            if (errorMessage) setErrorMessage("");
+          }}
+          aria-label="日記の内容"
+          maxLength={2000}
         />
 
         <button onClick={submit} disabled={posting} className={styles.button}>
