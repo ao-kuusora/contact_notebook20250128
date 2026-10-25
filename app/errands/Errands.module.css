@@ -114,3 +114,36 @@
 .normal {
   color: #8C7A6B; 
 }
+/* 状態表示 */
+.errorText {
+  font-size: 13px;
+  color: #C75B4A;
+}
+
+.stateText {
+  font-size: 14px;
+  color: #8C7A6B;
+}
+
+.retryButton {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #fff;
+  color: #8B5E3C;
+  border: 1px solid #8B5E3C;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.itemTitle {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}

@@ -61,13 +61,17 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   try {
     const user = await getCurrentUser();
-    if (!user || !user.coupleId) {
+    if (!user) {
+      return NextResponse.json({ error: "ログインしてください" }, { status: 401 });
+    }
+    if (!user.coupleId) {
       return NextResponse.json({ entries: [] });
     }
 
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type");
     const date = searchParams.get("date");
+    const doneParam = searchParams.get("done"); // "true" | "false" | なし
 
     // 取得件数の上限 (指定なしは 100 件、最大 200 件)。
     // 全件取得だと投稿が増えるほど通信量・描画が重くなるため。
@@ -101,6 +105,9 @@ export async function GET(req: Request) {
       where: {
         coupleId: user.coupleId,
         ...(type ? { type } : {}),
+        ...(doneParam === "true" || doneParam === "false"
+          ? { done: doneParam === "true" }
+          : {}),
         ...dateFilter,
       },
       orderBy: order,
@@ -122,6 +129,6 @@ export async function GET(req: Request) {
     return NextResponse.json({ entries: result });
   } catch (e) {
     console.error("APIエラー:", e);
-    return NextResponse.json({ entries: [] });
+    return NextResponse.json({ error: "読み込みに失敗しました" }, { status: 500 });
   }
 }

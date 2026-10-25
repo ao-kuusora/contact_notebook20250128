@@ -152,6 +152,7 @@
 
 /* 空表示 */
 .empty {
+  grid-column: 1 / -1;
   text-align: center;
   color: #8C7A6B;
   padding: 40px 0;
@@ -205,4 +206,39 @@
   .page {
     grid-template-columns: 1fr;
   }
+}
+
+/* ============================
+   状態表示 (エラー / 通知 / 再試行)
+============================ */
+.errorText {
+  font-size: 13px;
+  color: #C75B4A;
+}
+
+.noticeText {
+  font-size: 13px;
+  color: #8C7A6B;
+}
+
+.clearButton,
+.retryButton {
+  flex: none;
+  padding: 8px 12px;
+  background: #fff;
+  color: #8B5E3C;
+  border: 1px solid #8B5E3C;
+  border-radius: 6px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.retryButton {
+  margin-top: 12px;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: default;
 }

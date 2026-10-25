@@ -52,3 +52,47 @@
 .button:hover {
   opacity: 0.9;
 }
+.errorText {
+  font-size: 13px;
+  color: #C75B4A;
+}
+
+.noticeText {
+  font-size: 13px;
+  color: #8C7A6B;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* お互いの最新の忙しさ */
+.status {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.statusRow {
+  background: #fff;
+  border: 1px solid #EADFD4;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+}
+
+.statusLabel {
+  display: block;
+  font-size: 12px;
+  color: #8C7A6B;
+  margin-bottom: 2px;
+}
+
+.statusTime {
+  display: block;
+  font-size: 12px;
+  color: #A08F80;
+  margin-top: 2px;
+}

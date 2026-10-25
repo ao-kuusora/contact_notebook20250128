@@ -1,30 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styles from "./Workload.module.css";
+import { apiFetch, sendJson } from "@/lib/api";
+import type { EntryDTO } from "@/lib/types";
+
+const LEVELS = ["とても忙しい", "普通", "余裕あり", "飲みあり"];
 
 export default function WorkloadPage() {
   const [level, setLevel] = useState("");
+  const [entries, setEntries] = useState<EntryDTO[]>([]);
+  const [posting, setPosting] = useState(false);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+
+  const fetchEntries = useCallback(async () => {
+    const result = await apiFetch<{ entries: EntryDTO[] }>(
+      "/api/entries?type=WORKLOAD&limit=20"
+    );
+    if (result.ok) setEntries(result.data.entries ?? []);
+  }, []);
+
+  useEffect(() => {
+    fetchEntries();
+  }, [fetchEntries]);
 
   async function submit() {
+    if (posting) return;
+    setNotice("");
+
     if (!level) {
-      alert("忙しさを選択してください");
+      setError("忙しさを選択してください");
       return;
     }
 
-    await fetch("/api/entries", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "WORKLOAD",
-        content: level,
-        dueDate: null,
-      }),
+    setPosting(true);
+    setError("");
+
+    const result = await sendJson("/api/entries", {
+      type: "WORKLOAD",
+      content: level,
+      dueDate: null,
     });
+    setPosting(false);
+
+    // 以前は失敗しても「送信しました」と出てしまっていた
+    if (!result.ok) {
+      setError(result.error);
+      return;
+    }
 
     setLevel("");
-    alert("忙しさを送信しました");
+    setNotice("忙しさを送信しました");
+    fetchEntries();
   }
+
+  const latestMine = entries.find((e) => e.isMine);
+  const latestTheirs = entries.find((e) => !e.isMine);
 
   return (
     <div className={styles.container}>
@@ -37,16 +69,53 @@ export default function WorkloadPage() {
           onChange={(e) => setLevel(e.target.value)}
         >
           <option value="">選択してください</option>
-          <option value="とても忙しい">とても忙しい</option>
-          <option value="普通">普通</option>
-          <option value="余裕あり">余裕あり</option>
-          <option value="飲みあり">飲みあり</option>
+          {LEVELS.map((l) => (
+            <option key={l} value={l}>
+              {l}
+            </option>
+          ))}
         </select>
 
-        <button onClick={submit} className={styles.button}>
-          送信
+        {error && (
+          <p className={styles.errorText} role="alert">
+            {error}
+          </p>
+        )}
+        {notice && !error && (
+          <p className={styles.noticeText} role="status">
+            {notice}
+          </p>
+        )}
+
+        <button onClick={submit} disabled={posting} className={styles.button}>
+          {posting ? "送信中…" : "送信"}
         </button>
       </div>
+
+      {(latestTheirs || latestMine) && (
+        <div className={styles.status}>
+          {latestTheirs && (
+            <p className={styles.statusRow}>
+              <span className={styles.statusLabel}>
+                {latestTheirs.authorName} さん
+              </span>
+              {latestTheirs.content}
+              <span className={styles.statusTime}>
+                {new Date(latestTheirs.createdAt).toLocaleString()}
+              </span>
+            </p>
+          )}
+          {latestMine && (
+            <p className={styles.statusRow}>
+              <span className={styles.statusLabel}>あなた</span>
+              {latestMine.content}
+              <span className={styles.statusTime}>
+                {new Date(latestMine.createdAt).toLocaleString()}
+              </span>
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

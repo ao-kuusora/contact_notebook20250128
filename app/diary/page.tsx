@@ -1,62 +1,102 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import styles from "./Diary.module.css";
+import { apiFetch, sendJson } from "@/lib/api";
+import type { EntryDTO } from "@/lib/types";
+import { MAX_CONTENT_LENGTH } from "@/lib/validate";
 
 export default function DiaryPage() {
-  const [entries, setEntries] = useState<any[]>([]);
+  const [entries, setEntries] = useState<EntryDTO[]>([]);
   const [content, setContent] = useState("");
+
+  // 入力中の日付 / 実際に絞り込みに使っている日付 (空なら全件)
   const [selectedDate, setSelectedDate] = useState("");
+  const [activeDate, setActiveDate] = useState("");
 
-  async function fetchDiary(date?: string) {
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [posting, setPosting] = useState(false);
+  const [postError, setPostError] = useState("");
+  const [notice, setNotice] = useState("");
+
+  // 連打・通信順の入れ替わりで古い結果が後から表示されないようにする
+  const requestId = useRef(0);
+
+  const fetchDiary = useCallback(async (date: string) => {
+    const id = ++requestId.current;
+    setLoading(true);
+    setLoadError("");
+
     const url = date
-      ? `/api/entries?type=DIARY&date=${date}`
+      ? `/api/entries?type=DIARY&date=${encodeURIComponent(date)}`
       : `/api/entries?type=DIARY`;
+    const result = await apiFetch<{ entries: EntryDTO[] }>(url);
 
-    const res = await fetch(url, { cache: "no-store" });
-    const data = await res.json();
-    setEntries(data.entries ?? []);
-  }
+    if (id !== requestId.current) return;
+    setLoading(false);
 
-  async function submit() {
-    if (!content.trim()) return;
-
-    await fetch("/api/entries", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "DIARY",
-        content,
-        dueDate: null,
-      }),
-    });
-
-    setContent("");
-    fetchDiary(selectedDate || undefined);
-  }
-
-  useEffect(() => {
-    fetchDiary();
+    if (!result.ok) {
+      setLoadError(result.error);
+      return;
+    }
+    setEntries(result.data.entries ?? []);
+    setActiveDate(date);
   }, []);
 
-  async function searchByDate() {
+  useEffect(() => {
+    fetchDiary("");
+  }, [fetchDiary]);
+
+  async function submit() {
+    if (posting) return;
+    setNotice("");
+
+    if (!content.trim()) {
+      setPostError("日記の本文を入力してください");
+      return;
+    }
+
+    setPosting(true);
+    setPostError("");
+
+    const result = await sendJson("/api/entries", {
+      type: "DIARY",
+      content,
+      dueDate: null,
+    });
+
+    setPosting(false);
+
+    if (!result.ok) {
+      // 失敗したときは本文を消さない (書き直しにならないように)
+      setPostError(result.error);
+      return;
+    }
+
+    setContent("");
+
+    // 過去の日付で絞り込み中に投稿すると、新しい日記が一覧に出ず
+    // 「投稿できていない」ように見えるので、絞り込みを解除して全件を表示する
+    if (activeDate || selectedDate) {
+      setSelectedDate("");
+      setNotice("日記を投稿しました(日付の絞り込みは解除しました)");
+    } else {
+      setNotice("日記を投稿しました");
+    }
+    fetchDiary("");
+  }
+
+  function searchByDate() {
     if (!selectedDate) return;
     fetchDiary(selectedDate);
   }
 
-  useEffect(() => {
-    if (entries.length == 0) return;
-
-    const latest = entries[0];
-    if (latest.isMine) return;
-
-    fetch("/api/read", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ entryId: latest.id }),
-    });
-  }, [entries]);
+  function clearSearch() {
+    setSelectedDate("");
+    fetchDiary("");
+  }
 
   return (
     <div className={styles.container}>
@@ -72,11 +112,30 @@ export default function DiaryPage() {
         <button onClick={searchByDate} className={styles.searchButton}>
           日付で検索
         </button>
+        {activeDate && (
+          <button onClick={clearSearch} className={styles.clearButton}>
+            全部
+          </button>
+        )}
       </div>
 
       <div className={styles.page}>
-        {entries.length == 0 ? (
-          <p className={styles.empty}>この日の日記はありません</p>
+        {loadError ? (
+          <div className={styles.empty}>
+            <p className={styles.errorText}>{loadError}</p>
+            <button
+              onClick={() => fetchDiary(activeDate)}
+              className={styles.retryButton}
+            >
+              再読み込み
+            </button>
+          </div>
+        ) : loading && entries.length === 0 ? (
+          <p className={styles.empty}>読み込み中…</p>
+        ) : entries.length == 0 ? (
+          <p className={styles.empty}>
+            {activeDate ? "この日の日記はありません" : "まだ日記がありません"}
+          </p>
         ) : (
           entries.map((e) => (
             <div
@@ -90,15 +149,6 @@ export default function DiaryPage() {
               </Link>
 
               <div className={styles.meta}>
-                {e.iconUrl && (
-                  <img
-                    src={e.iconUrl}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    className={styles.icon}
-                  />
-                )}
                 <span className={styles.author}>{e.authorName}</span>
                 <span className={styles.date}>
                   {new Date(e.createdAt).toLocaleString()}
@@ -110,16 +160,27 @@ export default function DiaryPage() {
       </div>
 
       <div className={styles.writeArea}>
+        {postError && (
+          <p className={styles.errorText} role="alert">
+            {postError}
+          </p>
+        )}
+        {notice && !postError && (
+          <p className={styles.noticeText} role="status">
+            {notice}
+          </p>
+        )}
         <textarea
           className={styles.textarea}
           rows={4}
+          maxLength={MAX_CONTENT_LENGTH}
           placeholder="今日の気持ちを書こう"
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
 
-        <button onClick={submit} className={styles.button}>
-          今日の日記を書く
+        <button onClick={submit} disabled={posting} className={styles.button}>
+          {posting ? "送信中…" : "今日の日記を書く"}
         </button>
       </div>
     </div>
