@@ -26,18 +26,25 @@ export default function HealthPage() {
   const [notice, setNotice] = useState("");
 
   const conditionScore: Record<string, number> = { "しんどい": 1, "少し不調": 2, "まあまあ": 3, "元気": 4 };
-  const chartEntries = [...entries]
-    .map((entry) => ({ entry, report: parseReport(entry.content) }))
-    .filter(({ report }) => conditionScore[report.condition] !== undefined)
-    .sort((a, b) => new Date(a.entry.createdAt).getTime() - new Date(b.entry.createdAt).getTime())
-    .slice(-14);
-  const chartWidth = 640;
-  const chartHeight = 190;
-  const chartPoints = chartEntries.map(({ entry, report }, index) => ({
-    x: chartEntries.length < 2 ? chartWidth / 2 : 34 + index * (chartWidth - 68) / (chartEntries.length - 1),
-    y: 20 + (4 - conditionScore[report.condition]) * 42,
-    label: new Date(entry.createdAt).toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" }),
-    condition: report.condition,
+  const chartByDay = new Map<string, { report: ReturnType<typeof parseReport> }>();
+  [...entries]
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    .forEach((entry) => {
+      const report = parseReport(entry.content);
+      if (conditionScore[report.condition] === undefined) return;
+      const day = new Date(entry.createdAt).toLocaleDateString("sv-SE");
+      chartByDay.set(day, { report });
+    });
+  const chartEntries = [...chartByDay.entries()].slice(-14);
+  const plotLeft = 92;
+  const plotRight = 620;
+  const plotTop = 28;
+  const plotBottom = 190;
+  const chartPoints = chartEntries.map(([day, item], index) => ({
+    x: chartEntries.length < 2 ? (plotLeft + plotRight) / 2 : plotLeft + index * (plotRight - plotLeft) / (chartEntries.length - 1),
+    y: plotBottom - (conditionScore[item.report.condition] - 1) * ((plotBottom - plotTop) / 3),
+    label: new Date(day + "T12:00:00").toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" }),
+    condition: item.report.condition,
   }));
   const chartAccessibleLabel = chartPoints.map((point) => point.label + " " + point.condition).join("、");
 
@@ -129,30 +136,26 @@ export default function HealthPage() {
       <section className={styles.history}>
         <h2 className={styles.sectionTitle}>体調の変化</h2>
         <article className={styles.report}>
-          <p className={styles.chartDescription}>最近の報告から、体調の変化をグラフで見られるよ。</p>
           {chartPoints.length === 0 ? (
             <p className={styles.empty}>体調を報告すると、ここにグラフが表示されるよ。</p>
           ) : (
             <div className={styles.chartWrap}>
-              <div className={styles.chartLegend} aria-hidden="true">
-                <span>元気</span><span>まあまあ</span><span>少し不調</span><span>しんどい</span>
-              </div>
-              <svg className={styles.chart} viewBox="0 0 640 190" role="img" aria-label={"最近の体調の推移：" + chartAccessibleLabel}>
-                {[0, 1, 2, 3].map((level) => (
-                  <line key={level} x1="30" x2="620" y1={20 + level * 42} y2={20 + level * 42} className={styles.chartGrid} />
-                ))}
+              <svg className={styles.chart} viewBox="0 0 640 250" role="img" aria-label={"最近の体調の推移：" + chartAccessibleLabel}>
+                {[4, 3, 2, 1].map((score) => {
+                  const y = plotBottom - (score - 1) * ((plotBottom - plotTop) / 3);
+                  const label = score === 4 ? "元気" : score === 3 ? "まあまあ" : score === 2 ? "少し不調" : "しんどい";
+                  return <g key={score}><text x="8" y={y + 5} className={styles.chartAxisLabel}>{label}</text><line x1={plotLeft} x2={plotRight} y1={y} y2={y} className={styles.chartGrid} /></g>;
+                })}
                 {chartPoints.length > 1 && <polyline points={chartPoints.map((point) => point.x + "," + point.y).join(" ")} className={styles.chartLine} />}
-                {chartPoints.map((point, index) => (
-                  <g key={point.label + "-" + index}>
-                    <circle cx={point.x} cy={point.y} r="5" className={styles.chartDot} />
-                    <text x={point.x} y="177" textAnchor="middle" className={styles.chartDate}>{point.label}</text>
-                    <title>{point.label}：{point.condition}</title>
-                  </g>
-                ))}
+                {chartPoints.map((point, index) => <g key={point.label + "-" + index}>
+                  <circle cx={point.x} cy={point.y} r="5" className={styles.chartDot} />
+                  {(chartPoints.length <= 7 || index === 0 || index === chartPoints.length - 1 || index % 2 === 0) && <text x={point.x} y="218" textAnchor="middle" className={styles.chartDate}>{point.label}</text>}
+                  <title>{point.label}：{point.condition}</title>
+                </g>)}
               </svg>
             </div>
           )}
-          <p className={styles.chartFootnote}>直近14件を表示。上にあるほど元気、下にあるほどしんどい状態だよ。</p>
+          <p className={styles.chartFootnote}>直近14日分（1日1件）を表示。上ほど元気、下ほどしんどい状態だよ。</p>
         </article>
         <h2 className={styles.sectionTitle}>最近の報告</h2>
         {loading ? <p className={styles.empty}>読み込み中…</p> :
