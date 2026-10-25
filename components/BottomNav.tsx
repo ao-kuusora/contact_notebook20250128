@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import styles from "./BottomNav.module.css";
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
   const [expanded, setExpanded] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
 
   const items = [
     { href: "/chores", label: "家事" },
@@ -18,6 +21,23 @@ export default function BottomNav() {
     { href: "/workload", label: "忙しさ" },
     { href: "/diary", label: "日記" },
   ];
+
+  async function handleLogout() {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    setLogoutError("");
+    try {
+      const response = await fetch("/api/auth/logout", { method: "POST" });
+      if (!response.ok) throw new Error("ログアウトできませんでした。もう一度お試しください。");
+      setExpanded(false);
+      router.replace("/login");
+      router.refresh();
+    } catch {
+      setLogoutError("ログアウトできませんでした。通信状態を確認して再度お試しください。");
+    } finally {
+      setLoggingOut(false);
+    }
+  }
 
   return (
     <nav
@@ -54,6 +74,15 @@ export default function BottomNav() {
             </Link>
           );
         })}
+        <button
+          type="button"
+          className={`${styles.item} ${styles.logout}`}
+          onClick={handleLogout}
+          disabled={loggingOut}
+        >
+          {loggingOut ? "ログアウト中…" : "ログアウト"}
+        </button>
+        {logoutError && <p className={styles.logoutError} role="alert">{logoutError}</p>}
       </div>
     </nav>
   );
