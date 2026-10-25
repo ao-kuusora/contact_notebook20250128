@@ -208,6 +208,10 @@
   composes: primaryButton from "../../styles/common.module.css";
 }
 
+.button:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
 
 .button:disabled {
   cursor: not-allowed;
