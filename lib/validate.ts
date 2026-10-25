@@ -1,10 +1,13 @@
-export const ENTRY_TYPES = ["CHORE", "ERRAND", "WORKLOAD", "DIARY"] as const;
+export const ENTRY_TYPES = ["CHORE", "ERRAND", "WORKLOAD", "DIARY", "TASK"] as const;
 export type EntryType = (typeof ENTRY_TYPES)[number];
 
 export const MAX_CONTENT_LENGTH = 2000;
 
 export function isEntryType(value: unknown): value is EntryType {
-  return typeof value === "string" && (ENTRY_TYPES as readonly string[]).includes(value);
+  return (
+    typeof value === "string" &&
+    (ENTRY_TYPES as readonly string[]).includes(value)
+  );
 }
 
 export function isEmail(value: unknown): value is string {
