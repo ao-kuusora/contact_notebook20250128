@@ -44,6 +44,8 @@ export async function GET() {
         urgentErrand: null,
         todayWorkload: null,
         latestDiary: null,
+        latestTask: null,
+        latestHealth: null,
       });
     }
 
@@ -55,7 +57,7 @@ export async function GET() {
         include: { user: { select: { displayName: true } } },
       });
 
-    const [unread, latestChore, urgentErrand, todayWorkload, latestDiary] =
+    const [unread, latestChore, urgentErrand, todayWorkload, latestDiary, latestTask, latestHealth] =
       await Promise.all([
         // 未読バッジの判定は /api/unread と同じ関数を使う
         readRepo.unreadByType(user.id, coupleId),
@@ -68,6 +70,8 @@ export async function GET() {
         }),
         latestOf("WORKLOAD"),
         latestOf("DIARY"),
+        latestOf("TASK"),
+        latestOf("HEALTH"),
       ]);
 
     const shape = (e: (typeof latestChore)) =>
@@ -85,6 +89,8 @@ export async function GET() {
       urgentErrand: shape(urgentErrand),
       todayWorkload: shape(todayWorkload),
       latestDiary: shape(latestDiary),
+      latestTask: shape(latestTask),
+      latestHealth: shape(latestHealth),
     });
   } catch (e) {
     console.error("dashboard error:", e);
