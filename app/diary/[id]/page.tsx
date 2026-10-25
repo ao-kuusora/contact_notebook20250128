@@ -1,45 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import styles from "../DiaryDetail.module.css";
+import { useEntry } from "@/lib/useEntry";
 
 export default function DiaryDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params;
-  const [entry, setEntry] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  async function fetchEntry() {
-    setLoading(true); //読み込み開始
-
-    const res = await fetch(`/api/entries/${id}`, { cache: "no-store" });
-    const data = await res.json();
-    setEntry(data.entry);
-
-    setLoading(false); //読み込み終了
-  }
-
-  useEffect(() => {
-    fetchEntry();
-  }, []);
-
-  //既読
-  useEffect(() => {
-    if (!entry) return;
-    if (entry.isMine) return;
-
-    fetch("/api/read", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ entryId: entry.id }),
-    });
-  }, [entry]);
+  // 取得と、相手の日記を開いたときの既読化は useEntry がまとめて行う
+  const { entry, loading, error, reload } = useEntry(params.id);
 
   return (
     <div className={styles.container}>
-      {/* ローディング演出 */}
-      {loading && (
+      {loading && !entry && (
         <div className={styles.loadingOverlay}>
           <p className={styles.loadingText}>読み込み中…</p>
+        </div>
+      )}
+
+      {error && (
+        <div className={styles.empty}>
+          <p className={styles.errorText}>{error}</p>
+          <button onClick={reload} className={styles.retryButton}>
+            再読み込み
+          </button>
         </div>
       )}
 

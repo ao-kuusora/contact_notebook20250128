@@ -5,6 +5,7 @@ import Link from "next/link";
 import styles from "./Errands.module.css";
 import { apiFetch, sendJson } from "@/lib/api";
 import type { EntryDTO } from "@/lib/types";
+import { useMarkRead } from "@/lib/useEntry";
 import { MAX_CONTENT_LENGTH } from "@/lib/validate";
 
 // 期限が近い順 (期限なしは最後)
@@ -18,6 +19,7 @@ export default function ErrandsPage() {
   const [content, setContent] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [entries, setEntries] = useState<EntryDTO[]>([]);
+  useMarkRead(entries);
 
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");

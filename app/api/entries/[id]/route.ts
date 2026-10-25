@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { entryRepo } from "@/lib/repo/prismaRepo";
+import { getEntry } from "@/lib/services/entries";
 
 // cookies を使うため、ビルド時に静的生成せず毎回リクエスト時に実行する
 export const dynamic = "force-dynamic";
@@ -12,34 +14,8 @@ export async function GET(
 ) {
   try {
     const user = await getCurrentUser();
-    if (!user) return NextResponse.json({ error: "未ログイン" }, { status: 401 });
-
-    if (!user.coupleId) {
-      return NextResponse.json({ error: "連絡帳に参加していません" }, { status: 403 });
-    }
-
-    const entry = await prisma.entry.findUnique({
-      where: { id: params.id },
-      include: {
-        user: {
-          select: { displayName: true },
-        },
-        readStatus: true,
-      },
-    });
-
-    // 存在しない or 他カップルの投稿
-    if (!entry || entry.coupleId !== user.coupleId) {
-      return NextResponse.json({ error: "アクセス権がありません" }, { status: 403 });
-    }
-
-    return NextResponse.json({
-      entry: {
-        ...entry,
-        isMine: entry.userId === user.id,
-        authorName: entry.user.displayName,
-      },
-    });
+    const result = await getEntry(entryRepo, user, params.id);
+    return NextResponse.json(result.body, { status: result.status });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: "取得に失敗しました" }, { status: 500 });

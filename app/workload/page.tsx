@@ -4,12 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import styles from "./Workload.module.css";
 import { apiFetch, sendJson } from "@/lib/api";
 import type { EntryDTO } from "@/lib/types";
+import { useMarkRead } from "@/lib/useEntry";
 
 const LEVELS = ["とても忙しい", "普通", "余裕あり", "飲みあり"];
 
 export default function WorkloadPage() {
   const [level, setLevel] = useState("");
   const [entries, setEntries] = useState<EntryDTO[]>([]);
+  useMarkRead(entries);
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");

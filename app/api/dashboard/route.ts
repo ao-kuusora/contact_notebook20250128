@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
+import { readRepo } from "@/lib/repo/prismaRepo";
 
 // cookies を使うため、ビルド時に静的生成せず毎回リクエスト時に実行する
 export const dynamic = "force-dynamic";
@@ -54,18 +55,10 @@ export async function GET() {
         include: { user: { select: { displayName: true } } },
       });
 
-    const [grouped, latestChore, urgentErrand, todayWorkload, latestDiary] =
+    const [unread, latestChore, urgentErrand, todayWorkload, latestDiary] =
       await Promise.all([
-        // パートナーが書いた未読の投稿を種別ごとに集計
-        prisma.entry.groupBy({
-          by: ["type"],
-          where: {
-            coupleId,
-            userId: { not: user.id },
-            readStatus: { none: { userId: user.id, isRead: true } },
-          },
-          _count: { _all: true },
-        }),
+        // 未読バッジの判定は /api/unread と同じ関数を使う
+        readRepo.unreadByType(user.id, coupleId),
         latestOf("CHORE"),
         // 期限があって未完了のおつかいのうち、期限が一番近いもの
         prisma.entry.findFirst({
@@ -77,19 +70,16 @@ export async function GET() {
         latestOf("DIARY"),
       ]);
 
-    const has = (type: string) =>
-      grouped.some((g) => g.type === type && g._count._all > 0);
-
     const shape = (e: (typeof latestChore)) =>
       e ? { ...e, isMine: e.userId === user.id, authorName: e.user.displayName } : null;
 
     return NextResponse.json({
       user,
       unread: {
-        chores: has("CHORE"),
-        errands: has("ERRAND"),
-        workload: has("WORKLOAD"),
-        diary: has("DIARY"),
+        chores: !!unread.CHORE,
+        errands: !!unread.ERRAND,
+        workload: !!unread.WORKLOAD,
+        diary: !!unread.DIARY,
       },
       latestChore: shape(latestChore),
       urgentErrand: shape(urgentErrand),

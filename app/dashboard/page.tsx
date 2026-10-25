@@ -64,18 +64,11 @@ export default function DashboardPage() {
     return () => document.removeEventListener("visibilitychange", handler);
   }, [refresh]);
 
-  //各カテゴリの未読バッジ判定
-  const choresUnread =
-    unread.chores && latestChore && !latestChore.isMine;
-
-  const errandsUnread =
-    unread.errands && urgentErrand && !urgentErrand.isMine;
-
-  const workloadUnread =
-    unread.workload && todayWorkload && !todayWorkload.isMine;
-
-  const diaryUnread =
-    unread.diary && latestDiary && !latestDiary.isMine;
+  //未読バッジはサーバー (/api/unread と同じ判定) の結果をそのまま使う
+  const choresUnread = unread.chores;
+  const errandsUnread = unread.errands;
+  const workloadUnread = unread.workload;
+  const diaryUnread = unread.diary;
 
   if (!user) {
     return (

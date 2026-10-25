@@ -5,10 +5,12 @@ import Link from "next/link";
 import styles from "./Diary.module.css";
 import { apiFetch, sendJson } from "@/lib/api";
 import type { EntryDTO } from "@/lib/types";
+import { useMarkRead } from "@/lib/useEntry";
 import { MAX_CONTENT_LENGTH } from "@/lib/validate";
 
 export default function DiaryPage() {
   const [entries, setEntries] = useState<EntryDTO[]>([]);
+  useMarkRead(entries);
   const [content, setContent] = useState("");
 
   // 入力中の日付 / 実際に絞り込みに使っている日付 (空なら全件)

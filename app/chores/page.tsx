@@ -5,6 +5,7 @@ import Link from "next/link";
 import styles from "./Chores.module.css";
 import { apiFetch, sendJson } from "@/lib/api";
 import type { EntryDTO } from "@/lib/types";
+import { useMarkRead } from "@/lib/useEntry";
 import { MAX_CONTENT_LENGTH } from "@/lib/validate";
 
 const CHORE_OPTIONS = ["お洗濯", "ごみ捨て", "洗い物", "お掃除", "その他"];
@@ -13,6 +14,7 @@ export default function ChoresPage() {
   const [selected, setSelected] = useState("お洗濯");
   const [otherText, setOtherText] = useState("");
   const [entries, setEntries] = useState<EntryDTO[]>([]);
+  useMarkRead(entries);
 
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");

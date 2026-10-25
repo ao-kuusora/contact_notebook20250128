@@ -126,3 +126,20 @@
   align-items: center;
   justify-content: center;
 }
+.errorText {
+  font-size: 14px;
+  color: #C75B4A;
+  text-align: center;
+}
+
+.retryButton {
+  display: block;
+  margin: 12px auto 0;
+  padding: 8px 12px;
+  background: #fff;
+  color: #8B5E3C;
+  border: 1px solid #8B5E3C;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
