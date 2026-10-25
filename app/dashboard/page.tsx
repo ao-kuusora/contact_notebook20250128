@@ -127,7 +127,7 @@ export default function DashboardPage() {
             <>
               <p className={styles.cardText}>{latestTask.content}</p>
               <p className={styles.cardEmpty}>
-                {latestTask.authorName} さんが追加 · {new Date(latestTask.createdAt).toLocaleString("ja-JP")}
+                入力者：{latestTask.authorName} さん · {new Date(latestTask.createdAt).toLocaleString("ja-JP")}
                 {latestTask.done ? " · 完了" : " · 未完了"}
               </p>
             </>
@@ -141,7 +141,7 @@ export default function DashboardPage() {
           <h2 className={styles.cardTitle}>今日の体調</h2>
           {latestHealth ? (
             <>
-              <p className={styles.cardText}>{latestHealth.authorName} さんの報告</p>
+              <p className={styles.cardText}>入力者：{latestHealth.authorName} さん</p>
               <p className={styles.cardText}>{latestHealth.content.split("｜").slice(0, 2).join(" · ")}</p>
               <p className={styles.cardEmpty}>{new Date(latestHealth.createdAt).toLocaleString("ja-JP")}</p>
             </>
