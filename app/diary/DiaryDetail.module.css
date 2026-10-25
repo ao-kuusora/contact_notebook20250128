@@ -5,7 +5,6 @@
   max-width: 720px;
   margin: 0 auto;
   padding: 32px 20px;
-  font-family: "Zen Maru Gothic", "Hiragino Sans", "Noto Sans JP", sans-serif;
   color: #4A3F35;
 }
 
@@ -15,8 +14,7 @@
 .page {
   background: #FBF6F1;
   padding: 32px 28px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(234, 223, 212, 0.4);
+  border-radius: 6px;
   border: 1px solid #EADFD4;
 
   background-image: repeating-linear-gradient(
@@ -36,10 +34,7 @@
   margin: 0 auto 32px;
   max-width: 600px;
 
-  border-radius: 12px;
-  box-shadow:
-    0 1px 3px rgba(0,0,0,0.05),
-    0 0 0 3px #F7F5EE inset;
+  border-radius: 6px;
 
   display: flex;
   flex-direction: column;

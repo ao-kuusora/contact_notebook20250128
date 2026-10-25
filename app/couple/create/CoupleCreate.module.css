@@ -19,8 +19,7 @@
   max-width: 420px;
   background: #ffffff;
   padding: 32px;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(234, 223, 212, 0.5);
+  border-radius: 6px;
   border: 1px solid #EADFD4;
 }
 
@@ -43,17 +42,16 @@
   padding: 12px;
   background: #8B5E3C;
   color: white;
-  border-radius: 10px;
+  border-radius: 6px;
   font-size: 1rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.15s ease;
 }
 
 .button:hover {
   opacity: 0.9;
-  transform: translateY(-1px);
 }
 
 /* ============================
@@ -63,7 +61,7 @@
   margin-top: 24px;
   padding: 20px;
   border: 1px solid #EADFD4;
-  border-radius: 12px;
+  border-radius: 6px;
   background: #FFF9F4;
 }
 

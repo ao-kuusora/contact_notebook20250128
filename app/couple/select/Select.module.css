@@ -51,10 +51,10 @@
 .create,
 .join {
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   color: white;
   font-weight: 600;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.15s ease;
 }
 
 /* 作成ボタン　*/
@@ -70,5 +70,4 @@
 .create:hover,
 .join:hover {
   opacity: 0.9;
-  transform: translateY(-1px);
 }

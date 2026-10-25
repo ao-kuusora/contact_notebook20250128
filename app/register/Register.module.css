@@ -19,8 +19,7 @@
   max-width: 360px;
   background: #ffffff;
   padding: 28px;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(234, 223, 212, 0.5);
+  border-radius: 6px;
   border: 1px solid #EADFD4;
 }
 
@@ -63,7 +62,7 @@
   width: 100%;
   padding: 12px;
   border: 1.5px solid #D8CFC7;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 15px;
   outline: none;
   background: #FFF9F4;
@@ -90,17 +89,16 @@
   background: #8B5E3C;
   color: white;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   font-weight: 600;
   font-size: 15px;
   border: none;
   cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.15s ease;
 }
 
 .button:hover {
   opacity: 0.9;
-  transform: translateY(-1px);
 }
 
 /* ============================
