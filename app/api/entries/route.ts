@@ -4,6 +4,9 @@ import { getCurrentUser } from "@/lib/auth";
 import { Prisma } from "@prisma/client";
 import { isEntryType, isNonEmptyString, MAX_CONTENT_LENGTH } from "@/lib/validate";
 
+// cookies を使うため、ビルド時に静的生成せず毎回リクエスト時に実行する
+export const dynamic = "force-dynamic";
+
 const DEFAULT_LIST_LIMIT = 100;
 const MAX_LIST_LIMIT = 200;
 

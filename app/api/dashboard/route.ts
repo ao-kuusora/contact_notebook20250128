@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
 
+// cookies を使うため、ビルド時に静的生成せず毎回リクエスト時に実行する
+export const dynamic = "force-dynamic";
+
 const NO_UNREAD = { chores: false, errands: false, workload: false, diary: false };
 
 // ダッシュボードに必要なデータを 1 リクエストにまとめて返す。
