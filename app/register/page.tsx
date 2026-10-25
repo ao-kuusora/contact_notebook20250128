@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import styles from "./Register.module.css";
 
 export default function RegisterPage() {
@@ -11,7 +12,7 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
 
-  async function handleRegister(e) {
+  async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 
@@ -79,9 +80,9 @@ export default function RegisterPage() {
 
         <p className={styles.register}>
           すでにアカウントがありますか？{" "}
-          <a href="/login" className={styles.registerLink}>
+          <Link href="/login" className={styles.registerLink}>
             ログイン
-          </a>
+          </Link>
         </p>
       </div>
     </div>

@@ -1,131 +1,108 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import styles from "./Diary.module.css";
-
-type DiaryEntry = {
-  id: string;
-  content: string;
-  isMine: boolean;
-  authorName: string;
-  createdAt: string;
-  iconUrl?: string | null;
-};
-
-type ApiError = {
-  error?: string;
-  message?: string;
-};
+import { apiFetch, sendJson } from "@/lib/api";
+import type { EntryDTO } from "@/lib/types";
+import { useMarkRead } from "@/lib/useEntry";
+import { MAX_CONTENT_LENGTH } from "@/lib/validate";
 
 export default function DiaryPage() {
-  const [entries, setEntries] = useState<DiaryEntry[]>([]);
+  const [entries, setEntries] = useState<EntryDTO[]>([]);
+  useMarkRead(entries);
   const [content, setContent] = useState("");
+
+  // 入力中の日付 / 実際に絞り込みに使っている日付 (空なら全件)
   const [selectedDate, setSelectedDate] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [noticeMessage, setNoticeMessage] = useState("");
+  const [activeDate, setActiveDate] = useState("");
 
-  async function fetchDiary(date?: string) {
-    const params = new URLSearchParams({ type: "DIARY" });
-    if (date) params.set("date", date);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [posting, setPosting] = useState(false);
+  const [postError, setPostError] = useState("");
+  const [notice, setNotice] = useState("");
 
-    const res = await fetch(`/api/entries?${params.toString()}`, {
-      cache: "no-store",
-    });
-    const data = (await res.json().catch(() => ({}))) as {
-      entries?: DiaryEntry[];
-      error?: string;
-      message?: string;
-    };
+  // 連打・通信順の入れ替わりで古い結果が後から表示されないようにする
+  const requestId = useRef(0);
 
-    if (!res.ok) {
-      throw new Error(data.error || data.message || "日記の読み込みに失敗しました。");
+  const fetchDiary = useCallback(async (date: string) => {
+    const id = ++requestId.current;
+    setLoading(true);
+    setLoadError("");
+
+    const url = date
+      ? `/api/entries?type=DIARY&date=${encodeURIComponent(date)}`
+      : `/api/entries?type=DIARY`;
+    const result = await apiFetch<{ entries: EntryDTO[] }>(url);
+
+    if (id !== requestId.current) return;
+    setLoading(false);
+
+    if (!result.ok) {
+      setLoadError(result.error);
+      return;
     }
-
-    setEntries(data.entries ?? []);
-  }
-
-  useEffect(() => {
-    fetchDiary().catch((error: unknown) => {
-      setErrorMessage(
-        error instanceof Error ? error.message : "日記の読み込みに失敗しました。"
-      );
-    });
+    setEntries(result.data.entries ?? []);
+    setActiveDate(date);
   }, []);
 
-  async function searchByDate() {
-    if (!selectedDate) {
-      setErrorMessage("検索する日付を選んでください。");
-      return;
-    }
-
-    setErrorMessage("");
-    setNoticeMessage("");
-    try {
-      await fetchDiary(selectedDate);
-    } catch (error: unknown) {
-      setErrorMessage(
-        error instanceof Error ? error.message : "日記の読み込みに失敗しました。"
-      );
-    }
-  }
+  useEffect(() => {
+    fetchDiary("");
+  }, [fetchDiary]);
 
   async function submit() {
-    if (isSubmitting) return;
+    if (posting) return;
+    setNotice("");
 
     if (!content.trim()) {
-      setErrorMessage("日記の内容を入力してください。");
+      setPostError("日記の本文を入力してください");
       return;
     }
 
-    setIsSubmitting(true);
-    setErrorMessage("");
-    setNoticeMessage("");
+    setPosting(true);
+    setPostError("");
 
     try {
-      const res = await fetch("/api/entries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "DIARY",
-          content: content.trim(),
-          dueDate: null,
-        }),
+      const result = await sendJson("/api/entries", {
+        type: "DIARY",
+        content: content.trim(),
+        dueDate: null,
       });
-      const data = (await res.json().catch(() => ({}))) as ApiError;
 
-      if (!res.ok) {
-        throw new Error(data.error || data.message || "日記を投稿できませんでした。");
+      if (!result.ok) {
+        // 失敗したときは本文を消さない (書き直しにならないように)
+        setPostError(result.error);
+        return;
       }
 
-      // 投稿に成功したときだけ入力欄を空にする。
       setContent("");
-      setSelectedDate("");
-      await fetchDiary();
-      setNoticeMessage("日記を投稿しました。");
+
+      // 過去の日付で絞り込み中に投稿すると、新しい日記が一覧に出ず
+      // 「投稿できていない」ように見えるので、絞り込みを解除して全件を表示する
+      if (activeDate || selectedDate) {
+        setSelectedDate("");
+        setNotice("日記を投稿しました(日付の絞り込みは解除しました)");
+      } else {
+        setNotice("日記を投稿しました");
+      }
+      await fetchDiary("");
     } catch (error: unknown) {
-      setErrorMessage(
-        error instanceof Error ? error.message : "日記を投稿できませんでした。"
-      );
+      setPostError(error instanceof Error ? error.message : "日記を投稿できませんでした。");
     } finally {
-      setIsSubmitting(false);
+      setPosting(false);
     }
   }
 
-  useEffect(() => {
-    if (entries.length === 0) return;
+  function searchByDate() {
+    if (!selectedDate) return;
+    fetchDiary(selectedDate);
+  }
 
-    const latest = entries[0];
-    if (latest.isMine) return;
-
-    fetch("/api/read", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ entryId: latest.id }),
-    }).catch(() => {
-      // 既読更新に失敗しても、日記一覧の表示は維持する。
-    });
-  }, [entries]);
+  function clearSearch() {
+    setSelectedDate("");
+    fetchDiary("");
+  }
 
   return (
     <div className={styles.container}>
@@ -142,22 +119,41 @@ export default function DiaryPage() {
         <button onClick={searchByDate} className={styles.searchButton}>
           日付で検索
         </button>
+        {activeDate && (
+          <button onClick={clearSearch} className={styles.clearButton}>
+            全部
+          </button>
+        )}
       </div>
 
-      {errorMessage && (
+      {loadError && (
         <p role="alert" className={styles.errorMessage}>
-          {errorMessage}
+          {loadError}
         </p>
       )}
-      {noticeMessage && (
+      {notice && (
         <p role="status" className={styles.noticeMessage}>
-          {noticeMessage}
+          {notice}
         </p>
       )}
 
       <div className={styles.page}>
-        {entries.length === 0 ? (
-          <p className={styles.empty}>この日の日記はありません</p>
+        {loadError ? (
+          <div className={styles.empty}>
+            <p className={styles.errorText}>{loadError}</p>
+            <button
+              onClick={() => fetchDiary(activeDate)}
+              className={styles.retryButton}
+            >
+              再読み込み
+            </button>
+          </div>
+        ) : loading && entries.length === 0 ? (
+          <p className={styles.empty}>読み込み中…</p>
+        ) : entries.length == 0 ? (
+          <p className={styles.empty}>
+            {activeDate ? "この日の日記はありません" : "まだ日記がありません"}
+          </p>
         ) : (
           entries.map((entry) => (
             <div
@@ -166,15 +162,11 @@ export default function DiaryPage() {
                 entry.isMine ? styles.mine : styles.theirs
               }`}
             >
-              <a href={`/diary/${entry.id}`} className={styles.link}>
-                {entry.content.slice(0, 40)}
-                {entry.content.length > 40 ? "…" : ""}
-              </a>
+              <Link href={`/diary/${entry.id}`} className={styles.link}>
+                {entry.content.length > 40 ? `${entry.content.slice(0, 40)}…` : entry.content}
+              </Link>
 
               <div className={styles.meta}>
-                {entry.iconUrl && (
-                  <img src={entry.iconUrl} alt="" className={styles.icon} />
-                )}
                 <span className={styles.author}>{entry.authorName}</span>
                 <span className={styles.date}>
                   {new Date(entry.createdAt).toLocaleString()}
@@ -186,6 +178,16 @@ export default function DiaryPage() {
       </div>
 
       <div className={styles.writeArea}>
+        {postError && (
+          <p className={styles.errorText} role="alert">
+            {postError}
+          </p>
+        )}
+        {notice && !postError && (
+          <p className={styles.noticeText} role="status">
+            {notice}
+          </p>
+        )}
         <textarea
           className={styles.textarea}
           rows={4}
@@ -193,18 +195,14 @@ export default function DiaryPage() {
           value={content}
           onChange={(e) => {
             setContent(e.target.value);
-            if (errorMessage) setErrorMessage("");
+            if (postError) setPostError("");
           }}
           aria-label="日記の内容"
-          maxLength={2000}
+          maxLength={MAX_CONTENT_LENGTH}
         />
 
-        <button
-          onClick={submit}
-          className={styles.button}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "投稿中…" : "今日の日記を書く"}
+        <button onClick={submit} disabled={posting} className={styles.button}>
+          {posting ? "送信中…" : "今日の日記を書く"}
         </button>
       </div>
     </div>

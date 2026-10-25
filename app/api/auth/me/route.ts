@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 
+// cookies を使うため、ビルド時に静的生成せず毎回リクエスト時に実行する
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const me = await getCurrentUser();

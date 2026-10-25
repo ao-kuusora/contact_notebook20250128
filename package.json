@@ -3,7 +3,8 @@
     "postinstall": "prisma generate",
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "npx --yes tsx --test tests/*.test.ts"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

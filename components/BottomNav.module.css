@@ -2,23 +2,36 @@
   position: fixed;
   bottom: 0;
   left: 0;
-  height: 60px;
   width: 100%;
-  background: #FBF6F1;
-  border-top: 1px solid #EADFD4;
+  height: var(--bottomnav-h);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--c-surface);
+  border-top: 1px solid var(--c-line);
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  align-items: stretch;
   z-index: 50;
 }
 
+/* 均等割りにして、指で押せる範囲をラベルの外まで広げる */
 .item {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 14px;
-  color: #8C7A6B;
+  white-space: nowrap;
+  color: var(--c-muted);
   text-decoration: none;
 }
 
 .active {
-  color: #8B5E3C;
+  color: var(--c-brown-600);
   font-weight: 600;
+}
+
+@media (max-width: 360px) {
+  .item {
+    font-size: 12px;
+  }
 }

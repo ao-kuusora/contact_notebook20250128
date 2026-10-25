@@ -1,64 +1,103 @@
-@import "tailwindcss";
+/*
+ * 全体の土台スタイル。
+ * 各ページの見た目は CSS Modules が担当するので、ここは「リセット」と
+ * 「画面サイズに依存する共通変数」だけにしている。
+ */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* 配色 (デザインの色味はここで一元管理) */
+  --c-brown-900: #553924;
+  --c-brown-600: #8b5e3c;
+  --c-brown-500: #a0743c;
+  --c-text: #4a3f35;
+  --c-muted: #8c7a6b;
+  --c-faint: #a08f80;
+  --c-line: #eadfd4;
+  --c-input-line: #d8cfc7;
+  --c-surface: #fbf6f1;
+  --c-input-bg: #fff9f4;
+  --c-danger: #c75b4a;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+
+  /* 固定ヘッダー / ボトムナビの高さ (iPhone のノッチ・ホームバーぶんを加算) */
+  --topbar-h: calc(48px + env(safe-area-inset-top, 0px));
+  --bottomnav-h: calc(60px + env(safe-area-inset-bottom, 0px));
+  --chrome-h: calc(var(--topbar-h) + var(--bottomnav-h));
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
 
-/* 全体背景 */
 body {
-  background: #fafafa;
-  color: #111;
-  font-family: "Inter", sans-serif;
-  padding-top: 48px;
-  padding-bottom: 56px;
+  background: #ffffff;
+  color: #4a3f35;
+  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+  line-height: 1.5;
+  overflow-x: hidden;
 }
 
-/* カード */
-.card {
-  background: #fff;
-  border: 1px solid #e5e5e5;
-  border-radius: 12px;
-  padding: 16px;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
 }
 
-/* アクセントカラー（青） */
-.accent {
-  color: #2563eb;
+a {
+  color: inherit;
+  text-decoration: inherit;
 }
 
-/* 入力欄 */
-.input {
-  border: 1px solid #ddd;
-  padding: 12px;
-  border-radius: 8px;
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border-radius: 0;
 }
 
-/* ボタン */
-.button-primary {
-  background: #2563eb;
-  color: white;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: 600;
+button {
+  cursor: pointer;
 }
+
+/* iOS Safari は 16px 未満の入力欄にフォーカスすると画面が勝手に拡大されるため、
+   スマホ幅では入力欄を 16px にする */
+@media (max-width: 600px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #8b5e3c;
+  outline-offset: 2px;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
 }

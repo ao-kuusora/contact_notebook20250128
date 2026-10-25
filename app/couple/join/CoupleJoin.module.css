@@ -3,10 +3,11 @@
 ============================ */
 .screen {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #FBF6F1;
+  background: var(--c-surface);
   padding: 24px;
 }
 
@@ -18,9 +19,8 @@
   max-width: 420px;
   background: #ffffff;
   padding: 32px;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(234, 223, 212, 0.5);
-  border: 1px solid #EADFD4;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--c-line);
 }
 
 /* ============================
@@ -31,7 +31,7 @@
   font-weight: 700;
   margin-bottom: 24px;
   text-align: center;
-  color: #553924;
+  color: var(--c-brown-900);
 }
 
 /* ============================
@@ -47,16 +47,16 @@
 .input {
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid #D8CFC7;
-  border-radius: 10px;
+  border: 1px solid var(--c-input-line);
+  border-radius: var(--radius-sm);
   font-size: 1rem;
-  background: #FFF9F4;
-  color: #4A3F35;
+  background: var(--c-input-bg);
+  color: var(--c-text);
   transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input:focus {
-  border-color: #8B5E3C;
+  border-color: var(--c-brown-600);
   outline: none;
   box-shadow: 0 0 0 2px rgba(139, 94, 60, 0.2);
 }
@@ -67,19 +67,18 @@
 .button {
   width: 100%;
   padding: 12px;
-  background:#8B5E3C;
+  background:var(--c-brown-600);
   color: white;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   font-size: 1rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.15s ease;
 }
 
 .button:hover {
   opacity: 0.9;
-  transform: translateY(-1px);
 }
 
 /* ============================
@@ -87,14 +86,14 @@
 ============================ */
 .error {
   margin-top: 16px;
-  color: #C75B4A;
+  color: var(--c-danger);
   font-size: 0.9rem;
   text-align: center;
 }
 
 .success {
   margin-top: 16px;
-  color: #8B5E3C;
+  color: var(--c-brown-600);
   font-size: 0.9rem;
   text-align: center;
 }

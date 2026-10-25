@@ -5,19 +5,17 @@
   max-width: 720px;
   margin: 0 auto;
   padding: 32px 20px;
-  font-family: "Zen Maru Gothic", "Hiragino Sans", "Noto Sans JP", sans-serif;
-  color: #4A3F35;
+  color: var(--c-text);
 }
 
 /* ============================
    ノートページ
 ============================ */
 .page {
-  background: #FBF6F1;
+  background: var(--c-surface);
   padding: 32px 28px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(234, 223, 212, 0.4);
-  border: 1px solid #EADFD4;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--c-line);
 
   background-image: repeating-linear-gradient(
     to bottom,
@@ -36,10 +34,7 @@
   margin: 0 auto 32px;
   max-width: 600px;
 
-  border-radius: 12px;
-  box-shadow:
-    0 1px 3px rgba(0,0,0,0.05),
-    0 0 0 3px #F7F5EE inset;
+  border-radius: var(--radius-sm);
 
   display: flex;
   flex-direction: column;
@@ -66,7 +61,7 @@
   line-height: 1.9;
   font-size: 17px;
   padding-left: 4px;
-  color: #4A3F35;
+  color: var(--c-text);
 }
 
 /* ============================
@@ -96,7 +91,7 @@
 
 .date {
   font-size: 13px;
-  color: #A08F80;
+  color: var(--c-faint);
 }
 
 /* ============================
@@ -130,4 +125,15 @@
 .empty{
   align-items: center;
   justify-content: center;
+}
+.errorText {
+  composes: errorText from "../../styles/common.module.css";
+  font-size: 14px;
+  text-align: center;
+}
+
+.retryButton {
+  composes: secondaryButton from "../../styles/common.module.css";
+  display: block;
+  margin: 12px auto 0;
 }

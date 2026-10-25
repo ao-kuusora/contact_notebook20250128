@@ -28,11 +28,10 @@ export function signSession(userId: string): string {
 }
 
 /**
- * Cookie の session トークンを検証して、ログイン中のユーザーを返す。
- * 未ログイン・トークン不正・ユーザー不在の場合は null。
- * passwordHash は含めない。
+ * Cookie の session トークンを検証して userId を返す (DB アクセスなし)。
+ * 未ログイン・トークン不正の場合は null。
  */
-export async function getCurrentUser() {
+export function getSessionUserId(): string | null {
   const token = cookies().get("session")?.value;
   if (!token) return null;
 
@@ -41,9 +40,24 @@ export async function getCurrentUser() {
     if (typeof payload === "string" || typeof payload.userId !== "string") {
       return null;
     }
+    return payload.userId;
+  } catch {
+    return null;
+  }
+}
 
+/**
+ * Cookie の session トークンを検証して、ログイン中のユーザーを返す。
+ * 未ログイン・トークン不正・ユーザー不在の場合は null。
+ * passwordHash は含めない。
+ */
+export async function getCurrentUser() {
+  const userId = getSessionUserId();
+  if (!userId) return null;
+
+  try {
     return await prisma.user.findUnique({
-      where: { id: payload.userId },
+      where: { id: userId },
       select: {
         id: true,
         email: true,

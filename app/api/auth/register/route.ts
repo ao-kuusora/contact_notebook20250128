@@ -5,6 +5,11 @@ import { sessionCookieOptions, signSession } from "@/lib/auth";
 import { clientIp, rateLimit } from "@/lib/rateLimit";
 import { isEmail, isNonEmptyString } from "@/lib/validate";
 
+// Prisma の unique 制約違反 (同時登録でメールアドレスが重複したとき)
+function isUniqueViolation(e: unknown): boolean {
+  return typeof e === "object" && e !== null && (e as { code?: unknown }).code === "P2002";
+}
+
 const MIN_PASSWORD_LENGTH = 8;
 const MAX_PASSWORD_LENGTH = 72; // bcrypt は72バイトまで
 
@@ -64,8 +69,8 @@ export async function POST(req: Request) {
     res.cookies.set("session", signSession(user.id), sessionCookieOptions());
 
     return res;
-  } catch (e: any) {
-    if (e?.code === "P2002") {
+  } catch (e) {
+    if (isUniqueViolation(e)) {
       return NextResponse.json(
         { error: "このメールアドレスは既に登録されています" },
         { status: 400 }

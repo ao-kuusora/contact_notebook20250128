@@ -4,8 +4,9 @@
 .screen {
   padding: 40px;
   text-align: center;
-  background: #FBF6F1;
+  background: var(--c-surface);
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* ============================
@@ -14,13 +15,13 @@
 .title {
   font-size: 24px;
   font-weight: bold;
-  color: #553924;
+  color: var(--c-brown-900);
   margin-top: 90px;
 }
 
 .subtitle {
   margin-bottom: 20px;
-  color: #8C7A6B;
+  color: var(--c-muted);
   text-align: left;
   line-height: 1.8;
 }
@@ -50,24 +51,23 @@
 .create,
 .join {
   padding: 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: white;
   font-weight: 600;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.15s ease;
 }
 
 /* 作成ボタン　*/
 .create {
-  background: #8B5E3C;
+  background: var(--c-brown-600);
 }
 
 /* 参加ボタン */
 .join {
-  background: #A0743C;
+  background: var(--c-brown-500);
 }
 
 .create:hover,
 .join:hover {
   opacity: 0.9;
-  transform: translateY(-1px);
 }

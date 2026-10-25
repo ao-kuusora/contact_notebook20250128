@@ -1,22 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import styles from "./Dashboard.module.css";
+import { apiFetch, sendJson } from "@/lib/api";
+import type { DashboardDTO } from "@/lib/types";
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<any>(null);
-  const [latestChore, setLatestChore] = useState<any>(null);
-  const [urgentErrand, setUrgentErrand] = useState<any>(null);
-  const [todayWorkload, setTodayWorkload] = useState<any>(null);
-  const [latestDiary, setLatestDiary] = useState<any>(null);
-
-  const [unread, setUnread] = useState({
-    chores: false,
-    errands: false,
-    workload: false,
-    diary: false,
-  });
+  const router = useRouter();
+  const [data, setData] = useState<DashboardDTO | null>(null);
+  const [loadError, setLoadError] = useState("");
+  const [createError, setCreateError] = useState("");
 
   //今日の日付
   const today = new Date().toLocaleDateString("ja-JP", {
@@ -25,91 +20,63 @@ export default function DashboardPage() {
     day: "numeric",
   });
 
-  //unread を取得
-  async function refreshUnread() {
-    const res = await fetch("/api/unread", { cache: "no-store" });
-    const data = await res.json();
-    setUnread(data);
-  }
+  //ダッシュボードのデータを 1 リクエストでまとめて取得
+  const refresh = useCallback(async () => {
+    const result = await apiFetch<DashboardDTO>("/api/dashboard");
 
-  //初回 + タブ復帰時に unread 更新
+    if (!result.ok) {
+      // 画面に表示済みのデータは残し、初回のときだけエラーを出す
+      setLoadError(result.error);
+      return;
+    }
+
+    if (!result.data.user) {
+      // セッション切れ。ずっと「読み込み中」にならないようログインへ戻す
+      router.replace("/login");
+      return;
+    }
+
+    setLoadError("");
+    setData(result.data);
+  }, [router]);
+
+  //初回 + タブ復帰時に更新
   useEffect(() => {
-    refreshUnread();
+    refresh();
 
     const handler = () => {
       if (document.visibilityState == "visible") {
-        refreshUnread();
+        refresh();
       }
     };
 
     document.addEventListener("visibilitychange", handler);
     return () => document.removeEventListener("visibilitychange", handler);
-  }, []);
+  }, [refresh]);
 
-  //最新データ取得
-  useEffect(() => {
-    async function fetchData() {
-      const choresRes = await fetch("/api/entries?type=CHORE", { cache: "no-store" });
-      const choresData = await choresRes.json();
-      setLatestChore(choresData.entries?.[0] ?? null);
-
-      const errandsRes = await fetch("/api/entries?type=ERRAND", { cache: "no-store" });
-      const errandsData = await errandsRes.json();
-
-      const urgent = (errandsData.entries ?? [])
-        .filter((e: any) => e.dueDate && !e.done)
-        .sort((a: any, b: any) => {
-          const aDue = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
-          const bDue = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
-          return aDue - bDue;
-        })[0];
-
-      setUrgentErrand(urgent ?? null);
-
-      const workloadRes = await fetch("/api/entries?type=WORKLOAD", { cache: "no-store" });
-      const workloadData = await workloadRes.json();
-      setTodayWorkload(workloadData.entries?.[0] ?? null);
-
-      const diaryRes = await fetch("/api/entries?type=DIARY", { cache: "no-store" });
-      const diaryData = await diaryRes.json();
-
-      const list = diaryData.entries ?? [];
-      setLatestDiary(list[0] ?? null);
-    }
-
-    fetchData();
-  }, []);
-
-  //ユーザー情報
-  useEffect(() => {
-    async function fetchUser() {
-      const res = await fetch("/api/auth/me", { cache: "no-store" });
-      const data = await res.json();
-      setUser(data.user);
-    }
-    fetchUser();
-  }, []);
-
-  //各カテゴリの未読バッジ判定
-  const choresUnread =
-    unread.chores && latestChore && !latestChore.isMine;
-
-  const errandsUnread =
-    unread.errands && urgentErrand && !urgentErrand.isMine;
-
-  const workloadUnread =
-    unread.workload && todayWorkload && !todayWorkload.isMine;
-
-  const diaryUnread =
-    unread.diary && latestDiary && !latestDiary.isMine;
-
-  if (!user) {
+  if (!data) {
     return (
       <div className={styles.loadingWrapper}>
-        <p className={styles.loadingText}>読み込み中…</p>
+        <p className={styles.loadingText}>
+          {loadError || "読み込み中…"}
+        </p>
+        {loadError && (
+          <button className={styles.retryButton} onClick={refresh}>
+            再読み込み
+          </button>
+        )}
       </div>
     );
   }
+
+  const { user, unread, latestChore, urgentErrand, todayWorkload, latestDiary } =
+    data;
+
+  //未読バッジはサーバー (/api/unread と同じ判定) の結果をそのまま使う
+  const choresUnread = unread.chores;
+  const errandsUnread = unread.errands;
+  const workloadUnread = unread.workload;
+  const diaryUnread = unread.diary;
 
   return (
     <div className={styles.container}>
@@ -217,18 +184,18 @@ export default function DashboardPage() {
             <button
               className={styles.createButton}
               onClick={async () => {
-                const res = await fetch("/api/couple/create", { method: "POST" });
-                const data = await res.json();
-
-                if (res.ok) {
-                  window.location.reload();
+                setCreateError("");
+                const result = await sendJson("/api/couple/create", {});
+                if (result.ok) {
+                  refresh();
                 } else {
-                  alert(data.error);
+                  setCreateError(result.error);
                 }
               }}
             >
               連絡帳を作る
             </button>
+            {createError && <p className={styles.cardAlert}>{createError}</p>}
           </div>
         )}
       </div>

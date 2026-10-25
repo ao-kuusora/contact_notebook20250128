@@ -2,28 +2,38 @@
   position: fixed;
   top: 0;
   left: 0;
-  height: 48px;
   width: 100%;
-  background: #FBF6F1; 
-  border-bottom: 1px solid #EADFD4; 
+  height: var(--topbar-h);
+  padding-top: env(safe-area-inset-top, 0px);
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-line);
   display: flex;
   align-items: center;
   z-index: 50;
 }
 
-/* 左右のボタン領域 */
+/* 左右のボタン領域 (幅を揃えてタイトルを中央に保つ) */
 .side {
-  width: 90px;
+  flex: 0 0 96px;
   display: flex;
-  justify-content: flex-start;
-  padding-right: 12px;
+  align-items: center;
+  height: 100%;
+  padding: 0 8px;
   white-space: nowrap;
-  padding: 10px;
+}
+
+.side:first-child {
+  justify-content: flex-start;
+}
+
+.side:last-child {
+  justify-content: flex-end;
 }
 
 /* 中央タイトル領域 */
 .center {
   flex: 1;
+  min-width: 0;
   text-align: center;
 }
 
@@ -31,23 +41,35 @@
   font-size: 16px;
   font-weight: 600;
   line-height: 1;
-  color: #553924; /* 落ち着いたブラウン */
+  color: var(--c-brown-900); /* 落ち着いたブラウン */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* 戻るボタン */
+/* 戻るボタン / ログアウトボタン (タップしやすい高さを確保) */
+.back,
+.logout {
+  min-height: 44px;
+  padding: 0 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
 .back {
   font-size: 18px;
-  background: none;
-  border: none;
-  color: #8B5E3C; /* ブラウンアクセント */
-  cursor: pointer;
+  color: var(--c-brown-600); /* ブラウンアクセント */
 }
 
-/* ログアウトボタン */
 .logout {
-  font-size: 14px;
-  background: none;
-  border: none;
-  color: #C75B4A; /* 赤茶で柔らかく */
-  cursor: pointer;
+  font-size: 13px;
+  color: var(--c-danger); /* 赤茶で柔らかく */
+}
+
+@media (max-width: 360px) {
+  .side {
+    flex-basis: 80px;
+    padding: 0 4px;
+  }
 }
