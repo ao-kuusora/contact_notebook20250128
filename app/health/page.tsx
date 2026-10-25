@@ -7,7 +7,7 @@ import type { EntryDTO } from "@/lib/types";
 import { useMarkRead } from "@/lib/useEntry";
 
 const CONDITION_LEVELS = ["元気", "まあまあ", "少し不調", "しんどい"] as const;
-const MOOD_LEVELS = ["😊 ごきげん", "🙂 ふつう", "😐 ちょっと疲れた", "😔 落ち込み気味"] as const;
+const MOOD_SUGGESTIONS = ["😊", "🙂", "😐", "😔", "🥰", "😭", "😡", "( ˘ω˘ )", "(ง •̀_•́)ง"];
 
 function parseReport(content: string) {
   const match = content.match(/^体調：([^｜]+)｜気分：([^｜]+)(?:｜メモ：([\\s\\S]*))?$/);
@@ -39,7 +39,7 @@ export default function HealthPage() {
 
   async function submit() {
     if (posting) return;
-    if (!condition || !mood) {
+    if (!condition || !mood.trim()) {
       setError("体調と気分を選んでください");
       return;
     }
@@ -47,7 +47,7 @@ export default function HealthPage() {
     setError("");
     setNotice("");
     try {
-      const parts = [`体調：${condition}｜気分：${mood}`];
+      const parts = [`体調：${condition}｜気分：${mood.trim()}`];
       if (note.trim()) parts.push(`メモ：${note.trim()}`);
       const result = await sendJson("/api/entries", {
         type: "HEALTH",
@@ -88,14 +88,26 @@ export default function HealthPage() {
           </div>
         </fieldset>
         <fieldset className={styles.fieldset}>
-          <legend className={styles.label}>気分</legend>
-          <div className={styles.options}>
-            {MOOD_LEVELS.map((value) => (
-              <button key={value} type="button" aria-pressed={mood === value}
-                className={mood === value ? styles.optionActive : styles.option}
-                onClick={() => setMood(value)}>{value}</button>
+          <legend className={styles.label}>気分・顔文字</legend>
+          <input
+            id="health-mood"
+            className={styles.moodInput}
+            type="text"
+            value={mood}
+            onChange={(event) => setMood(event.target.value)}
+            maxLength={40}
+            placeholder="例：😊 ごきげん、( ˘ω˘ )、ちょっと疲れた"
+            aria-label="今の気分や顔文字"
+          />
+          <div className={styles.moodSuggestions} aria-label="顔文字の候補">
+            {MOOD_SUGGESTIONS.map((value) => (
+              <button key={value} type="button" className={styles.moodSuggestion}
+                onClick={() => setMood((current) => current ? `${current} ${value}` : value)}>
+                {value}
+              </button>
             ))}
           </div>
+          <p className={styles.hint}>顔文字や絵文字、言葉で自由に入力できるよ。</p>
         </fieldset>
         <label className={styles.label} htmlFor="health-note">ひとこと（任意）</label>
         <textarea id="health-note" className={styles.textarea} value={note}
