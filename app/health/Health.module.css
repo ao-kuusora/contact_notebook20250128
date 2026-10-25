@@ -113,7 +113,7 @@
 }
 @media (min-width: 1000px) {
   .desktopLayout {
-    grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: start;
     gap: 28px;
   }
@@ -124,4 +124,12 @@
   .desktopLayout > .card {
     min-width: 0;
   }
+}
+
+@media (min-width: 1000px) {
+  .container { max-width: 1440px; }
+  .desktopLayout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .desktopLayout > .history { width: 100%; }
+  .desktopLayout > .history > .report { width: 100%; box-sizing: border-box; }
+  .chart { min-height: 0; }
 }
