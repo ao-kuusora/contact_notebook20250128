@@ -25,9 +25,23 @@
   cursor: pointer;
 }
 
-.chevron {
-  font-size: 18px;
-  line-height: 1;
+.hamburger {
+  display: inline-flex;
+  width: 20px;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hamburger > span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.toggleLabel {
+  display: inline;
 }
 
 .links {
@@ -79,14 +93,62 @@
   }
 }
 
-@media (max-width: 360px) {
+/* スマホでは右上の小さなハンバーガーボタンに収納 */
+@media (max-width: 600px) {
+  .nav {
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
+    right: 10px;
+    bottom: auto;
+    left: auto;
+    width: auto;
+    max-width: min(320px, calc(100vw - 20px));
+    padding: 0;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .toggle {
+    width: 42px;
+    min-height: 42px;
+    margin-left: auto;
+    padding: 11px;
+    border: 1px solid var(--c-line);
+    border-radius: 12px;
+    background: var(--c-surface);
+    box-shadow: 0 3px 12px rgb(85 57 36 / 12%);
+  }
+
+  .toggleLabel {
+    display: none;
+  }
+
+  .hamburger {
+    width: 19px;
+    gap: 4px;
+  }
+
   .links {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+    margin-top: 7px;
+    padding: 8px;
+    border: 1px solid var(--c-line);
+    border-radius: 14px;
+    background: var(--c-surface);
+    box-shadow: 0 6px 24px rgb(85 57 36 / 15%);
+  }
+
+  .item {
+    min-height: 40px;
+    padding: 8px 10px;
+    font-size: 13px;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .item {
-    transition: none;
+@media (max-width: 360px) {
+  .links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
