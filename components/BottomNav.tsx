@@ -10,21 +10,22 @@ export default function BottomNav() {
   const items = [
     { href: "/chores", label: "家事" },
     { href: "/errands", label: "おつかい" },
-    { href: "/dashboard", label: "ホーム" }, 
+    { href: "/tasks", label: "タスク" },
+    { href: "/dashboard", label: "ホーム" },
     { href: "/workload", label: "忙しさ" },
     { href: "/diary", label: "日記" },
   ];
 
   return (
-    <nav className={styles.nav}>
+    <nav className={styles.nav} aria-label="メインナビゲーション">
       {items.map((item) => {
         const active = pathname.startsWith(item.href);
-
         return (
           <Link
             key={item.href}
             href={item.href}
             className={`${styles.item} ${active ? styles.active : ""}`}
+            aria-current={active ? "page" : undefined}
           >
             {item.label}
           </Link>
