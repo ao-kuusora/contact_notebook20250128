@@ -2,8 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { isEmail, isEntryType, isNonEmptyString } from "../lib/validate";
 
-test("isEntryType: 4種類だけ許可", () => {
-  for (const t of ["CHORE", "ERRAND", "WORKLOAD", "DIARY"]) assert.equal(isEntryType(t), true);
+test("isEntryType: 定義済みの投稿タイプを許可", () => {
+  for (const t of ["CHORE", "ERRAND", "WORKLOAD", "DIARY", "TASK", "HEALTH"]) assert.equal(isEntryType(t), true);
   for (const t of ["chore", "", "OTHER", null, undefined, 1]) assert.equal(isEntryType(t), false);
 });
 
