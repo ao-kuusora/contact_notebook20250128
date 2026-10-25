@@ -1,4 +1,4 @@
-export const ENTRY_TYPES = ["CHORE", "ERRAND", "WORKLOAD", "DIARY", "TASK"] as const;
+export const ENTRY_TYPES = ["CHORE", "ERRAND", "WORKLOAD", "DIARY", "TASK", "HEALTH"] as const;
 export type EntryType = (typeof ENTRY_TYPES)[number];
 
 export const MAX_CONTENT_LENGTH = 2000;
