@@ -77,40 +77,35 @@ export default function DiaryPage() {
     setPosting(true);
     setPostError("");
 
-    const result = await sendJson("/api/entries", {
-      type: "DIARY",
-      content,
-      dueDate: null,
-    });
-    const data = (await res.json().catch(() => ({}))) as {
-      entries?: DiaryEntry[];
-      error?: string;
-      message?: string;
-    };
+    try {
+      const result = await sendJson("/api/entries", {
+        type: "DIARY",
+        content: content.trim(),
+        dueDate: null,
+      });
 
-    if (!res.ok) {
-      throw new Error(data.error || data.message || "日記の読み込みに失敗しました。");
+      if (!result.ok) {
+        // 失敗したときは本文を消さない (書き直しにならないように)
+        setPostError(result.error);
+        return;
+      }
+
+      setContent("");
+
+      // 過去の日付で絞り込み中に投稿すると、新しい日記が一覧に出ず
+      // 「投稿できていない」ように見えるので、絞り込みを解除して全件を表示する
+      if (activeDate || selectedDate) {
+        setSelectedDate("");
+        setNotice("日記を投稿しました(日付の絞り込みは解除しました)");
+      } else {
+        setNotice("日記を投稿しました");
+      }
+      await fetchDiary("");
+    } catch (error: unknown) {
+      setPostError(error instanceof Error ? error.message : "日記を投稿できませんでした。");
+    } finally {
+      setPosting(false);
     }
-
-    setPosting(false);
-
-    if (!result.ok) {
-      // 失敗したときは本文を消さない (書き直しにならないように)
-      setPostError(result.error);
-      return;
-    }
-
-    setContent("");
-
-    // 過去の日付で絞り込み中に投稿すると、新しい日記が一覧に出ず
-    // 「投稿できていない」ように見えるので、絞り込みを解除して全件を表示する
-    if (activeDate || selectedDate) {
-      setSelectedDate("");
-      setNotice("日記を投稿しました(日付の絞り込みは解除しました)");
-    } else {
-      setNotice("日記を投稿しました");
-    }
-    fetchDiary("");
   }
 
   function searchByDate() {
@@ -145,14 +140,14 @@ export default function DiaryPage() {
         )}
       </div>
 
-      {errorMessage && (
-        <p role="alert" className={styles.errorMessage}>
-          {errorMessage}
+      {loadError && (
+        <p role="alert" className={styles.loadError}>
+          {loadError}
         </p>
       )}
-      {noticeMessage && (
-        <p role="status" className={styles.noticeMessage}>
-          {noticeMessage}
+      {notice && (
+        <p role="status" className={styles.notice}>
+          {notice}
         </p>
       )}
 
@@ -181,12 +176,12 @@ export default function DiaryPage() {
                 entry.isMine ? styles.mine : styles.theirs
               }`}
             >
-              <Link href={`/diary/${e.id}`} className={styles.link}>
-                {e.content.length > 40 ? `${e.content.slice(0, 40)}…` : e.content}
+              <Link href={`/diary/${entry.id}`} className={styles.link}>
+                {entry.content.length > 40 ? `${entry.content.slice(0, 40)}…` : entry.content}
               </Link>
 
               <div className={styles.meta}>
-                <span className={styles.author}>{e.authorName}</span>
+                <span className={styles.author}>{entry.authorName}</span>
                 <span className={styles.date}>
                   {new Date(entry.createdAt).toLocaleString()}
                 </span>
@@ -210,15 +205,14 @@ export default function DiaryPage() {
         <textarea
           className={styles.textarea}
           rows={4}
-          maxLength={MAX_CONTENT_LENGTH}
           placeholder="今日の気持ちを書こう"
           value={content}
           onChange={(e) => {
             setContent(e.target.value);
-            if (errorMessage) setErrorMessage("");
+            if (postError) setPostError("");
           }}
           aria-label="日記の内容"
-          maxLength={2000}
+          maxLength={MAX_CONTENT_LENGTH}
         />
 
         <button onClick={submit} disabled={posting} className={styles.button}>
