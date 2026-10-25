@@ -69,7 +69,7 @@ export default function DashboardPage() {
     );
   }
 
-  const { user, unread, latestChore, urgentErrand, todayWorkload, latestDiary } =
+  const { user, unread, latestChore, urgentErrand, todayWorkload, latestDiary, latestTask, latestHealth } =
     data;
 
   //未読バッジはサーバー (/api/unread と同じ判定) の結果をそのまま使う
@@ -123,13 +123,31 @@ export default function DashboardPage() {
         {/* タスク */}
         <Link href="/tasks" className={styles.card}>
           <h2 className={styles.cardTitle}>ふたりのタスク</h2>
-          <p className={styles.cardEmpty}>2人でやること・忘れたくない用事を確認</p>
+          {latestTask ? (
+            <>
+              <p className={styles.cardText}>{latestTask.content}</p>
+              <p className={styles.cardEmpty}>
+                {latestTask.authorName} さんが追加 · {new Date(latestTask.createdAt).toLocaleString("ja-JP")}
+                {latestTask.done ? " · 完了" : " · 未完了"}
+              </p>
+            </>
+          ) : (
+            <p className={styles.cardEmpty}>まだタスクはありません</p>
+          )}
         </Link>
 
         {/* 今日の体調 */}
         <Link href="/health" className={styles.card}>
           <h2 className={styles.cardTitle}>今日の体調</h2>
-          <p className={styles.cardEmpty}>今日の体調や気分をパートナーと共有</p>
+          {latestHealth ? (
+            <>
+              <p className={styles.cardText}>{latestHealth.authorName} さんの報告</p>
+              <p className={styles.cardText}>{latestHealth.content.split("｜").slice(0, 2).join(" · ")}</p>
+              <p className={styles.cardEmpty}>{new Date(latestHealth.createdAt).toLocaleString("ja-JP")}</p>
+            </>
+          ) : (
+            <p className={styles.cardEmpty}>まだ体調報告はありません</p>
+          )}
         </Link>
 
         {/* 忙しさ */}
