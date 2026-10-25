@@ -75,3 +75,32 @@
 .chartDot { fill: var(--c-brown-600); stroke: #fff; stroke-width: 2; }
 .chartDate { fill: var(--c-muted); font-size: 12px; }
 .chartFootnote { margin: 8px 0 0; color: var(--c-muted); font-size: 12px; line-height: 1.6; }
+
+/* PCではグラフを大きく、スマホでは現在の見やすい幅を維持 */
+@media (min-width: 900px) {
+  .history > .report {
+    padding: 28px 32px;
+  }
+  .chartWrap {
+    max-width: 100%;
+  }
+  .chart {
+    width: 100%;
+    min-height: 300px;
+  }
+  .chartAxisLabel {
+    font-size: 15px;
+  }
+  .chartDate {
+    font-size: 13px;
+  }
+  .chartLine {
+    stroke-width: 4;
+  }
+  .chartDot {
+    r: 6;
+  }
+  .chartFootnote {
+    font-size: 13px;
+  }
+}
