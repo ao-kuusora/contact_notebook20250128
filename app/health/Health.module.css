@@ -36,3 +36,22 @@
 .reportNote { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--c-line); font-size: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .empty { color: var(--c-muted); font-size: 14px; padding: 12px 0; }
 @media (min-width: 600px) { .options { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* 気分の自由入力欄を、ひとこと欄など既存フォームの見た目に合わせる */
+.moodInput {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--c-input-line);
+  border-radius: var(--radius-sm);
+  background: var(--c-surface);
+  color: var(--c-text);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.moodInput::placeholder { color: var(--c-muted); opacity: 0.85; }
+.moodInput:focus { outline: 2px solid var(--c-brown-600); outline-offset: 1px; }
+.hint { margin: 6px 0 0; color: var(--c-muted); font-size: 12px; line-height: 1.5; }
