@@ -8,20 +8,6 @@ import type { EntryDTO } from "@/lib/types";
 import { useMarkRead } from "@/lib/useEntry";
 import { MAX_CONTENT_LENGTH } from "@/lib/validate";
 
-type DiaryEntry = {
-  id: string;
-  content: string;
-  isMine: boolean;
-  authorName: string;
-  createdAt: string;
-  iconUrl?: string | null;
-};
-
-type ApiError = {
-  error?: string;
-  message?: string;
-};
-
 export default function DiaryPage() {
   const [entries, setEntries] = useState<EntryDTO[]>([]);
   useMarkRead(entries);
@@ -141,12 +127,12 @@ export default function DiaryPage() {
       </div>
 
       {loadError && (
-        <p role="alert" className={styles.loadError}>
+        <p role="alert" className={styles.errorMessage}>
           {loadError}
         </p>
       )}
       {notice && (
-        <p role="status" className={styles.notice}>
+        <p role="status" className={styles.noticeMessage}>
           {notice}
         </p>
       )}
