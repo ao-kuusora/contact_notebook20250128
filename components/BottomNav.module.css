@@ -173,3 +173,24 @@
   font-size: 12px;
   text-align: center;
 }
+
+.logout {
+  color: #c0392b;
+  border: 1px solid #efc2bd;
+  background: #fff5f4;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logout:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.logoutError {
+  grid-column: 1 / -1;
+  padding: 4px 6px;
+  color: var(--c-danger);
+  font-size: 12px;
+  text-align: center;
+}
