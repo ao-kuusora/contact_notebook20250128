@@ -126,6 +126,12 @@ export default function DashboardPage() {
           <p className={styles.cardEmpty}>2人でやること・忘れたくない用事を確認</p>
         </Link>
 
+        {/* 今日の体調 */}
+        <Link href="/health" className={styles.card}>
+          <h2 className={styles.cardTitle}>今日の体調</h2>
+          <p className={styles.cardEmpty}>今日の体調や気分をパートナーと共有</p>
+        </Link>
+
         {/* 忙しさ */}
         <Link href="/workload" className={styles.card}>
           <h2 className={styles.cardTitle}>
