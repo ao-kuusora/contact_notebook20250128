@@ -65,6 +65,27 @@
   transform: translateY(-1px);
 }
 
+/* エラー・成功メッセージ */
+.errorMessage,
+.noticeMessage {
+  margin: 4px 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.errorMessage {
+  color: #8f2525;
+  background: #fff0f0;
+  border: 1px solid #f0caca;
+}
+
+.noticeMessage {
+  color: #315d3a;
+  background: #eff8ef;
+  border: 1px solid #cfe6d0;
+}
+
 /* ============================
    日記一覧（スクロール）
 ============================ */
@@ -199,9 +220,14 @@
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.button:hover {
+.button:hover:not(:disabled) {
   opacity: 0.9;
   transform: translateY(-1px);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 /* ============================
