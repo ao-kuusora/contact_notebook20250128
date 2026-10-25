@@ -98,6 +98,7 @@ export default function HealthPage() {
       </header>
 
       <div className={styles.desktopLayout}>
+      <div className={styles.healthMainColumn}>
       <section className={styles.card} aria-labelledby="report-title">
         <h2 id="report-title" className={styles.sectionTitle}>今日の状態を教えてね</h2>
         <fieldset className={styles.fieldset}>
@@ -158,6 +159,9 @@ export default function HealthPage() {
           )}
           <p className={styles.chartFootnote}>直近14日分（1日1件）を表示。上ほど元気、下ほどしんどい状態だよ。</p>
         </article>
+      </section>
+      </div>
+      <section className={styles.recentHistory}>
         <h2 className={styles.sectionTitle}>最近の報告</h2>
         {loading ? <p className={styles.empty}>読み込み中…</p> :
           entries.length === 0 ? <p className={styles.empty}>まだ報告はありません。最初の報告をしてみよう。</p> :
@@ -175,6 +179,7 @@ export default function HealthPage() {
               </article>
             );
           })}
+
       </section>
       </div>
     </main>
