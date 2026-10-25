@@ -8,7 +8,7 @@ export default function CoupleJoinPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  async function handleJoin(e) {
+  async function handleJoin(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 

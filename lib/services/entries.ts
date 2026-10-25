@@ -1,4 +1,4 @@
-import { isEntryType } from "../validate";
+import { isEntryType, isNonEmptyString, MAX_CONTENT_LENGTH } from "../validate";
 import { fail, ok, Result, SessionUser } from "./result";
 
 export const DEFAULT_LIST_LIMIT = 100;
@@ -29,9 +29,18 @@ export type ListQuery = {
   take: number;
 };
 
+export type NewEntry = {
+  type: string;
+  content: string;
+  dueDate: Date | null;
+  userId: string;
+  coupleId: string;
+};
+
 export interface EntryRepo {
   list(query: ListQuery): Promise<EntryRow[]>;
   findById(id: string, viewerId: string): Promise<EntryRow | null>;
+  create(data: NewEntry): Promise<{ id: string; createdAt: Date }>;
 }
 
 /** 画面に返す形 (isMine / authorName / 既読つき) */
@@ -150,4 +159,42 @@ export async function getEntry(
   }
 
   return ok({ entry: toEntryDto(row, user.id) });
+}
+
+/** 投稿を作る */
+export async function createEntry(
+  repo: EntryRepo,
+  user: SessionUser | null,
+  body: unknown
+): Promise<Result> {
+  if (!user) return fail(401, "ログインしてください");
+  if (!user.coupleId) return fail(403, "連絡帳に参加していません");
+
+  const { type, content, dueDate } = (body ?? {}) as {
+    type?: unknown;
+    content?: unknown;
+    dueDate?: unknown;
+  };
+
+  if (!isEntryType(type)) return fail(400, "type が不正です");
+
+  if (!isNonEmptyString(content, MAX_CONTENT_LENGTH)) {
+    return fail(400, `内容は1〜${MAX_CONTENT_LENGTH}文字で入力してください`);
+  }
+
+  let due: Date | null = null;
+  if (dueDate) {
+    due = new Date(dueDate as string);
+    if (Number.isNaN(due.getTime())) return fail(400, "期限の日付が不正です");
+  }
+
+  const entry = await repo.create({
+    type,
+    content,
+    dueDate: due,
+    userId: user.id,
+    coupleId: user.coupleId,
+  });
+
+  return ok({ entry });
 }

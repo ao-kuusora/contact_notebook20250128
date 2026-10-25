@@ -13,7 +13,20 @@ const entryInclude = (viewerId: string) =>
     },
   }) as const;
 
-function toRow(r: any): EntryRow {
+type RowWithRelations = {
+  id: string;
+  type: string;
+  content: string;
+  dueDate: Date | null;
+  done: boolean;
+  userId: string;
+  coupleId: string;
+  createdAt: Date;
+  user: { displayName: string };
+  readStatus: { isRead: boolean }[];
+};
+
+function toRow(r: RowWithRelations): EntryRow {
   return {
     id: r.id,
     type: r.type,
@@ -24,7 +37,7 @@ function toRow(r: any): EntryRow {
     coupleId: r.coupleId,
     createdAt: r.createdAt,
     authorName: r.user.displayName,
-    isRead: r.readStatus.some((s: { isRead: boolean }) => s.isRead),
+    isRead: r.readStatus.some((s) => s.isRead),
   };
 }
 
@@ -42,6 +55,14 @@ export const entryRepo: EntryRepo = {
       include: entryInclude(q.viewerId),
     });
     return rows.map(toRow);
+  },
+
+  async create(data) {
+    const entry = await prisma.entry.create({
+      data: { ...data, done: false },
+      select: { id: true, createdAt: true },
+    });
+    return entry;
   },
 
   async findById(id: string, viewerId: string) {

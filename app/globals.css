@@ -5,6 +5,21 @@
  */
 
 :root {
+  /* 配色 (デザインの色味はここで一元管理) */
+  --c-brown-900: #553924;
+  --c-brown-600: #8b5e3c;
+  --c-brown-500: #a0743c;
+  --c-text: #4a3f35;
+  --c-muted: #8c7a6b;
+  --c-faint: #a08f80;
+  --c-line: #eadfd4;
+  --c-input-line: #d8cfc7;
+  --c-surface: #fbf6f1;
+  --c-input-bg: #fff9f4;
+  --c-danger: #c75b4a;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+
   /* 固定ヘッダー / ボトムナビの高さ (iPhone のノッチ・ホームバーぶんを加算) */
   --topbar-h: calc(48px + env(safe-area-inset-top, 0px));
   --bottomnav-h: calc(60px + env(safe-area-inset-bottom, 0px));

@@ -12,7 +12,7 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  color: #4A3F35;
+  color: var(--c-text);
 }
 
 .title {
@@ -20,7 +20,7 @@
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 8px;
-  color: #553924;
+  color: var(--c-brown-900);
 }
 
 /* ============================
@@ -37,19 +37,19 @@
   flex: 1;
   min-width: 0;
   padding: 8px;
-  border: 1px solid #D8CFC7;
-  border-radius: 6px;
-  background: #FFF9F4;
-  color: #4A3F35;
+  border: 1px solid var(--c-input-line);
+  border-radius: var(--radius-sm);
+  background: var(--c-input-bg);
+  color: var(--c-text);
 }
 
 .searchButton {
   flex: none;
   padding: 8px 12px;
-  background: #8B5E3C;
+  background: var(--c-brown-600);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
@@ -83,7 +83,7 @@
 .diaryEntry {
   background: #FFFDF7;
   border: 1px solid #E0DCCC;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 12px;
 
 
@@ -110,7 +110,7 @@
 .link {
   font-size: 14px;
   line-height: 1.5;
-  color: #553924;
+  color: var(--c-brown-900);
   text-decoration: none;
   display: block;
   margin-bottom: 8px;
@@ -147,14 +147,14 @@
 
 .date {
   font-size: 11px;
-  color: #A08F80;
+  color: var(--c-faint);
 }
 
 /* 空表示 */
 .empty {
   grid-column: 1 / -1;
   text-align: center;
-  color: #8C7A6B;
+  color: var(--c-muted);
   padding: 40px 0;
   margin: 0 auto;
 }
@@ -168,36 +168,25 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border-top: 1px solid #EADFD4;
+  border-top: 1px solid var(--c-line);
   background: #fff;
 }
 
 .textarea {
   width: 100%;
   height: 70px;
-  border: 1px solid #D8CFC7;
-  border-radius: 6px;
+  border: 1px solid var(--c-input-line);
+  border-radius: var(--radius-sm);
   padding: 10px;
   resize: none;
-  background: #FFF9F4;
-  color: #4A3F35;
+  background: var(--c-input-bg);
+  color: var(--c-text);
 }
 
 .button {
-  background: #8B5E3C;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 6px;
-  border: none;
-  font-weight: 600;
-  width: 100%;
-  cursor: pointer;
-  transition: opacity 0.15s ease;
+  composes: primaryButton from "../../styles/common.module.css";
 }
 
-.button:hover {
-  opacity: 0.9;
-}
 
 /* ============================
    レスポンシブ（狭い画面は1カラム）
@@ -212,33 +201,21 @@
    状態表示 (エラー / 通知 / 再試行)
 ============================ */
 .errorText {
-  font-size: 13px;
-  color: #C75B4A;
+  composes: errorText from "../../styles/common.module.css";
 }
 
 .noticeText {
   font-size: 13px;
-  color: #8C7A6B;
+  color: var(--c-muted);
 }
 
-.clearButton,
-.retryButton {
+.clearButton {
+  composes: secondaryButton from "../../styles/common.module.css";
   flex: none;
-  padding: 8px 12px;
-  background: #fff;
-  color: #8B5E3C;
-  border: 1px solid #8B5E3C;
-  border-radius: 6px;
-  font-weight: 600;
-  white-space: nowrap;
-  cursor: pointer;
 }
 
 .retryButton {
+  composes: secondaryButton from "../../styles/common.module.css";
   margin-top: 12px;
 }
 
-.button:disabled {
-  opacity: 0.6;
-  cursor: default;
-}

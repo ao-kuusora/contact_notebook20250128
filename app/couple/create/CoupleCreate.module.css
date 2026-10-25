@@ -7,7 +7,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #FBF6F1;
+  background: var(--c-surface);
   padding: 24px;
 }
 
@@ -19,8 +19,8 @@
   max-width: 420px;
   background: #ffffff;
   padding: 32px;
-  border-radius: 6px;
-  border: 1px solid #EADFD4;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--c-line);
 }
 
 /* ============================
@@ -31,28 +31,16 @@
   font-weight: 700;
   margin-bottom: 24px;
   text-align: center;
-  color: #553924;
+  color: var(--c-brown-900);
 }
 
 /* ============================
    ボタン
 ============================ */
 .button {
-  width: 100%;
-  padding: 12px;
-  background: #8B5E3C;
-  color: white;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.15s ease;
+  composes: primaryButton from "../../../styles/common.module.css";
 }
 
-.button:hover {
-  opacity: 0.9;
-}
 
 /* ============================
    招待コードボックス
@@ -60,9 +48,9 @@
 .inviteBox {
   margin-top: 24px;
   padding: 20px;
-  border: 1px solid #EADFD4;
-  border-radius: 6px;
-  background: #FFF9F4;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-sm);
+  background: var(--c-input-bg);
 }
 
 .inviteLabel {
@@ -76,7 +64,7 @@
   margin-top: 8px;
   font-weight: 700;
   letter-spacing: 0.5px;
-  color: #553924;
+  color: var(--c-brown-900);
 }
 
 /* ============================
@@ -84,7 +72,7 @@
 ============================ */
 .error {
   margin-top: 16px;
-  color: #C75B4A;
+  color: var(--c-danger);
   font-size: 0.9rem;
   text-align: center;
 }

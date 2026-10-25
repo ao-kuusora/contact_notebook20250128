@@ -1,24 +1,18 @@
 /* 全体 */
 .container {
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 24px 16px;
-  color: #4A3F35;
+  composes: pageContainer from "../../styles/common.module.css";
 }
 
 /* タイトル */
 .title {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 16px;
-  color: #553924;
+  composes: pageTitle from "../../styles/common.module.css";
 }
 
 /* カード */
 .card {
   background: #fff;
-  border: 1px solid #EADFD4;
-  border-radius: 6px;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-sm);
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -28,44 +22,28 @@
 /* セレクトボックス */
 .select {
   width: 100%;
-  border: 1px solid #D8CFC7;
-  border-radius: 6px;
+  border: 1px solid var(--c-input-line);
+  border-radius: var(--radius-sm);
   padding: 10px 12px;
   font-size: 14px;
-  background: #FBF6F1;
-  color: #4A3F35;
+  background: var(--c-surface);
+  color: var(--c-text);
 }
 
 /* ボタン */
 .button {
-  width: 100%;
-  background: #8B5E3C;
-  color: white;
-  padding: 12px;
-  border-radius: 6px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.15s ease;
+  composes: primaryButton from "../../styles/common.module.css";
 }
 
-.button:hover {
-  opacity: 0.9;
-}
 .errorText {
-  font-size: 13px;
-  color: #C75B4A;
+  composes: errorText from "../../styles/common.module.css";
 }
 
 .noticeText {
   font-size: 13px;
-  color: #8C7A6B;
+  color: var(--c-muted);
 }
 
-.button:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
 
 /* お互いの最新の忙しさ */
 .status {
@@ -77,8 +55,8 @@
 
 .statusRow {
   background: #fff;
-  border: 1px solid #EADFD4;
-  border-radius: 8px;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-md);
   padding: 12px;
   font-size: 14px;
 }
@@ -86,13 +64,13 @@
 .statusLabel {
   display: block;
   font-size: 12px;
-  color: #8C7A6B;
+  color: var(--c-muted);
   margin-bottom: 2px;
 }
 
 .statusTime {
   display: block;
   font-size: 12px;
-  color: #A08F80;
+  color: var(--c-faint);
   margin-top: 2px;
 }

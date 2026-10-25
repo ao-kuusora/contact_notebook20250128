@@ -5,8 +5,8 @@
   width: 100%;
   height: var(--topbar-h);
   padding-top: env(safe-area-inset-top, 0px);
-  background: #FBF6F1;
-  border-bottom: 1px solid #EADFD4;
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-line);
   display: flex;
   align-items: center;
   z-index: 50;
@@ -41,7 +41,7 @@
   font-size: 16px;
   font-weight: 600;
   line-height: 1;
-  color: #553924; /* 落ち着いたブラウン */
+  color: var(--c-brown-900); /* 落ち着いたブラウン */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -59,12 +59,12 @@
 
 .back {
   font-size: 18px;
-  color: #8B5E3C; /* ブラウンアクセント */
+  color: var(--c-brown-600); /* ブラウンアクセント */
 }
 
 .logout {
   font-size: 13px;
-  color: #C75B4A; /* 赤茶で柔らかく */
+  color: var(--c-danger); /* 赤茶で柔らかく */
 }
 
 @media (max-width: 360px) {

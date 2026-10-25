@@ -1,17 +1,13 @@
 /* 全体 */
 .container {
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-  padding: 24px 16px;
-  color: #4A3F35;
+  composes: pageContainer from "../../styles/common.module.css";
 }
 
 /* Loading */
 .loading {
   padding: 24px;
   text-align: center;
-  color: #8C7A6B;
+  color: var(--c-muted);
 }
 
 .loadingWrapper {
@@ -42,12 +38,12 @@
 .title {
   font-size: 24px;
   font-weight: 700;
-  color: #553924;
+  color: var(--c-brown-900);
 }
 
 .subtitle {
   margin-top: 4px;
-  color: #8C7A6B;
+  color: var(--c-muted);
   font-size: 14px;
 }
 
@@ -61,8 +57,8 @@
 /* Card */
 .card {
   background: #fff;
-  border: 1px solid #EADFD4;
-  border-radius: 6px;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-sm);
   padding: 16px;
   text-decoration: none;
   color: inherit;
@@ -78,12 +74,12 @@
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 6px;
-  color: #8B5E3C;
+  color: var(--c-brown-600);
 }
 
 .cardText {
   font-size: 14px;
-  color: #4A3F35;
+  color: var(--c-text);
 }
 
 .cardEmpty {
@@ -93,7 +89,7 @@
 
 .cardAlert {
   font-size: 14px;
-  color: #C75B4A;
+  color: var(--c-danger);
   font-weight: 600;
 }
 
@@ -113,8 +109,8 @@
   margin-top: 8px;
   padding: 16px;
   border: 1px solid #F1E3D8;
-  border-radius: 6px;
-  background: #FBF6F1;
+  border-radius: var(--radius-sm);
+  background: var(--c-surface);
 }
 
 .coupleId {
@@ -122,7 +118,7 @@
   font-weight: 700;
   margin-top: 6px;
   letter-spacing: 0.5px;
-  color: #8B5E3C;
+  color: var(--c-brown-600);
 }
 
 /* Buttons */
@@ -130,9 +126,9 @@
 .createButton {
   margin-top: 12px;
   padding: 12px 14px;
-  background: #8B5E3C;
+  background: var(--c-brown-600);
   color: white;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.95rem;
   font-weight: 700;
   width: 100%;
@@ -146,4 +142,9 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+.retryButton {
+  composes: secondaryButton from "../../styles/common.module.css";
+  margin-top: 12px;
 }

@@ -5,17 +5,17 @@
   max-width: 720px;
   margin: 0 auto;
   padding: 32px 20px;
-  color: #4A3F35;
+  color: var(--c-text);
 }
 
 /* ============================
    ノートページ
 ============================ */
 .page {
-  background: #FBF6F1;
+  background: var(--c-surface);
   padding: 32px 28px;
-  border-radius: 6px;
-  border: 1px solid #EADFD4;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--c-line);
 
   background-image: repeating-linear-gradient(
     to bottom,
@@ -34,7 +34,7 @@
   margin: 0 auto 32px;
   max-width: 600px;
 
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 
   display: flex;
   flex-direction: column;
@@ -61,7 +61,7 @@
   line-height: 1.9;
   font-size: 17px;
   padding-left: 4px;
-  color: #4A3F35;
+  color: var(--c-text);
 }
 
 /* ============================
@@ -91,7 +91,7 @@
 
 .date {
   font-size: 13px;
-  color: #A08F80;
+  color: var(--c-faint);
 }
 
 /* ============================
@@ -127,19 +127,13 @@
   justify-content: center;
 }
 .errorText {
+  composes: errorText from "../../styles/common.module.css";
   font-size: 14px;
-  color: #C75B4A;
   text-align: center;
 }
 
 .retryButton {
+  composes: secondaryButton from "../../styles/common.module.css";
   display: block;
   margin: 12px auto 0;
-  padding: 8px 12px;
-  background: #fff;
-  color: #8B5E3C;
-  border: 1px solid #8B5E3C;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
 }

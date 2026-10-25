@@ -12,7 +12,7 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
 
-  async function handleRegister(e) {
+  async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 

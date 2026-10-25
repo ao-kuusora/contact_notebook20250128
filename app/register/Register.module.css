@@ -7,7 +7,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #FBF6F1;
+  background: var(--c-surface);
   padding: 24px;
 }
 
@@ -19,8 +19,8 @@
   max-width: 360px;
   background: #ffffff;
   padding: 28px;
-  border-radius: 6px;
-  border: 1px solid #EADFD4;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--c-line);
 }
 
 /* ============================
@@ -31,12 +31,12 @@
   font-weight: 700;
   text-align: center;
   margin-bottom: 4px;
-  color: #553924;
+  color: var(--c-brown-900);
 }
 
 .subtitle {
   text-align: center;
-  color: #8C7A6B;
+  color: var(--c-muted);
   font-size: 14px;
   margin-bottom: 24px;
 }
@@ -61,22 +61,22 @@
 .input {
   width: 100%;
   padding: 12px;
-  border: 1.5px solid #D8CFC7;
-  border-radius: 6px;
+  border: 1.5px solid var(--c-input-line);
+  border-radius: var(--radius-sm);
   font-size: 15px;
   outline: none;
-  background: #FFF9F4;
-  color: #4A3F35;
+  background: var(--c-input-bg);
+  color: var(--c-text);
 }
 
 .input:focus {
-  border-color: #8B5E3C;
+  border-color: var(--c-brown-600);
   box-shadow: 0 0 0 2px rgba(139, 94, 60, 0.2);
 }
 
 /* エラー */
 .error {
-  color: #C75B4A;
+  color: var(--c-danger);
   text-align: center;
   font-size: 14px;
 }
@@ -85,21 +85,9 @@
    ボタン
 ============================ */
 .button {
-  width: 100%;
-  background: #8B5E3C;
-  color: white;
-  padding: 12px;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 15px;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.15s ease;
+  composes: primaryButton from "../../styles/common.module.css";
 }
 
-.button:hover {
-  opacity: 0.9;
-}
 
 /* ============================
    登録リンク
@@ -108,11 +96,11 @@
   text-align: center;
   margin-top: 20px;
   font-size: 14px;
-  color: #8C7A6B;
+  color: var(--c-muted);
 }
 
 .registerLink {
-  color: #8B5E3C;
+  color: var(--c-brown-600);
   font-weight: 600;
   text-decoration: none;
 }

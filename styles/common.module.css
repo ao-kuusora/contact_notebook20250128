@@ -1,0 +1,61 @@
+/*
+ * 画面をまたいで共通のスタイル。
+ * 各 *.module.css から `composes: xxx from "<相対パス>/styles/common.module.css";` で取り込む。
+ * 色・角丸は app/globals.css の変数を使う。
+ */
+
+.pageContainer {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  color: var(--c-text);
+}
+
+.pageTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--c-brown-900);
+}
+
+.primaryButton {
+  width: 100%;
+  background: var(--c-brown-600);
+  color: #fff;
+  padding: 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.primaryButton:hover {
+  opacity: 0.9;
+}
+
+.primaryButton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.secondaryButton {
+  padding: 8px 12px;
+  background: #fff;
+  color: var(--c-brown-600);
+  border: 1px solid var(--c-brown-600);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.errorText {
+  font-size: 13px;
+  color: var(--c-danger);
+}
+
+.stateText {
+  font-size: 14px;
+  color: var(--c-muted);
+}
