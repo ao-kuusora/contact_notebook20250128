@@ -133,3 +133,12 @@
   .desktopLayout > .history > .report { width: 100%; box-sizing: border-box; }
   .chart { min-height: 0; }
 }
+
+.healthMainColumn { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.recentHistory { min-width: 0; }
+@media (min-width: 1000px) {
+  .desktopLayout { grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr); align-items: start; }
+  .healthMainColumn { min-width: 0; }
+  .recentHistory { width: 100%; }
+  .recentHistory > .report { box-sizing: border-box; width: 100%; }
+}
