@@ -28,13 +28,16 @@ export default function BottomNav() {
         type="button"
         className={styles.toggle}
         onClick={() => setExpanded((current) => !current)}
+        aria-label={expanded ? "メニューを閉じる" : "メニューを開く"}
         aria-expanded={expanded}
         aria-controls="bottom-navigation-links"
       >
-        <span>{expanded ? "メニューを閉じる" : "メニュー"}</span>
-        <span className={styles.chevron} aria-hidden="true">
-          {expanded ? "⌄" : "⌃"}
+        <span className={styles.hamburger} aria-hidden="true">
+          <span />
+          <span />
+          <span />
         </span>
+        <span className={styles.toggleLabel}>{expanded ? "閉じる" : "メニュー"}</span>
       </button>
       <div id="bottom-navigation-links" className={styles.links} hidden={!expanded}>
         {items.map((item) => {
