@@ -196,7 +196,7 @@ export default function DiaryPage() {
             if (errorMessage) setErrorMessage("");
           }}
           aria-label="日記の内容"
-          maxLength={10000}
+          maxLength={2000}
         />
 
         <button
