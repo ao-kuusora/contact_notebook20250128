@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import styles from "./Diary.module.css";
 
 export default function DiaryPage() {
@@ -84,13 +85,19 @@ export default function DiaryPage() {
                 e.isMine ? styles.mine : styles.theirs
               }`}
             >
-              <a href={`/diary/${e.id}`} className={styles.link}>
-                {e.content.slice(0, 40)}…
-              </a>
+              <Link href={`/diary/${e.id}`} className={styles.link}>
+                {e.content.length > 40 ? `${e.content.slice(0, 40)}…` : e.content}
+              </Link>
 
               <div className={styles.meta}>
                 {e.iconUrl && (
-                  <img src={e.iconUrl} alt="" className={styles.icon} />
+                  <img
+                    src={e.iconUrl}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    className={styles.icon}
+                  />
                 )}
                 <span className={styles.author}>{e.authorName}</span>
                 <span className={styles.date}>

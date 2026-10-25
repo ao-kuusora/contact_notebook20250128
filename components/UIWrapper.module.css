@@ -1,4 +1,9 @@
 .wrapper {
-  padding-top: 48px;
-  padding-bottom: 56px;
+  padding-top: var(--topbar-h);
+  padding-bottom: var(--bottomnav-h);
+}
+
+.main {
+  width: 100%;
+  margin: 0 auto;
 }

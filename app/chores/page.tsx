@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import styles from "./Chores.module.css";
 
 export default function ChoresPage() {
@@ -78,12 +79,12 @@ export default function ChoresPage() {
       {/* 一覧 */}
       <div className={styles.list}>
         {entries.map((e) => (
-          <a key={e.id} href={`/chores/${e.id}`} className={styles.item}>
+          <Link key={e.id} href={`/chores/${e.id}`} className={styles.item}>
             <p className={styles.itemMeta}>
               {e.user.displayName}・{new Date(e.createdAt).toLocaleString()}
             </p>
             <p className={styles.itemContent}>{e.content}</p>
-          </a>
+          </Link>
         ))}
       </div>
     </div>

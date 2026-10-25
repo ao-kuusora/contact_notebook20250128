@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import styles from "./Login.module.css";
 export default function LoginPage() {
   const router = useRouter();
@@ -68,9 +69,9 @@ export default function LoginPage() {
 
         <p className={styles.register}>
           アカウントがない方は{" "}
-          <a href="/register" className={styles.registerLink}>
+          <Link href="/register" className={styles.registerLink}>
             新規登録
-          </a>
+          </Link>
         </p>
       </div>
     </div>

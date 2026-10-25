@@ -4,6 +4,9 @@ import { getCurrentUser } from "@/lib/auth";
 import { Prisma } from "@prisma/client";
 import { isEntryType, isNonEmptyString, MAX_CONTENT_LENGTH } from "@/lib/validate";
 
+const DEFAULT_LIST_LIMIT = 100;
+const MAX_LIST_LIMIT = 200;
+
 export async function POST(req: Request) {
   try {
     const user = await getCurrentUser();
@@ -63,6 +66,14 @@ export async function GET(req: Request) {
     const type = searchParams.get("type");
     const date = searchParams.get("date");
 
+    // 取得件数の上限 (指定なしは 100 件、最大 200 件)。
+    // 全件取得だと投稿が増えるほど通信量・描画が重くなるため。
+    const limitParam = Number(searchParams.get("limit"));
+    const take =
+      Number.isInteger(limitParam) && limitParam > 0
+        ? Math.min(limitParam, MAX_LIST_LIMIT)
+        : DEFAULT_LIST_LIMIT;
+
     let dateFilter = {};
 
     // date は "YYYY-MM-DD"。サーバーのタイムゾーンに依存しないよう JST の1日で絞る
@@ -90,11 +101,11 @@ export async function GET(req: Request) {
         ...dateFilter,
       },
       orderBy: order,
+      take,
       include: {
         user: {
           select: { displayName: true }, // displayName のみ取得
         },
-        readStatus: true,
       },
     });
 
