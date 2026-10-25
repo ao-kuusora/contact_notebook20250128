@@ -66,3 +66,12 @@
 .chartDot { fill: var(--c-brown-600); stroke: #fff; stroke-width: 2; }
 .chartDate { fill: var(--c-muted); font-size: 11px; }
 .chartFootnote { margin: 8px 0 0; color: var(--c-muted); font-size: 11px; line-height: 1.5; }
+
+.chartWrap { width: 100%; min-width: 0; overflow: hidden; }
+.chart { display: block; width: 100%; height: auto; }
+.chartAxisLabel { fill: var(--c-muted); font-size: 13px; }
+.chartGrid { stroke: var(--c-line); stroke-width: 1; }
+.chartLine { fill: none; stroke: var(--c-brown-600); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.chartDot { fill: var(--c-brown-600); stroke: #fff; stroke-width: 2; }
+.chartDate { fill: var(--c-muted); font-size: 12px; }
+.chartFootnote { margin: 8px 0 0; color: var(--c-muted); font-size: 12px; line-height: 1.6; }
