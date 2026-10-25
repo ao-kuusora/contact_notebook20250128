@@ -52,4 +52,6 @@ export type DashboardDTO = {
   urgentErrand: EntryDTO | null;
   todayWorkload: EntryDTO | null;
   latestDiary: EntryDTO | null;
+  latestTask: EntryDTO | null;
+  latestHealth: EntryDTO | null;
 };
