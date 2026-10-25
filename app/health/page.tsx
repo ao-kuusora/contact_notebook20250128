@@ -25,6 +25,22 @@ export default function HealthPage() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
+  const conditionScore: Record<string, number> = { "しんどい": 1, "少し不調": 2, "まあまあ": 3, "元気": 4 };
+  const chartEntries = [...entries]
+    .map((entry) => ({ entry, report: parseReport(entry.content) }))
+    .filter(({ report }) => conditionScore[report.condition] !== undefined)
+    .sort((a, b) => new Date(a.entry.createdAt).getTime() - new Date(b.entry.createdAt).getTime())
+    .slice(-14);
+  const chartWidth = 640;
+  const chartHeight = 190;
+  const chartPoints = chartEntries.map(({ entry, report }, index) => ({
+    x: chartEntries.length < 2 ? chartWidth / 2 : 34 + index * (chartWidth - 68) / (chartEntries.length - 1),
+    y: 20 + (4 - conditionScore[report.condition]) * 42,
+    label: new Date(entry.createdAt).toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" }),
+    condition: report.condition,
+  }));
+  const chartAccessibleLabel = chartPoints.map((point) => point.label + " " + point.condition).join("、");
+
   const fetchReports = useCallback(async () => {
     setLoading(true);
     const result = await apiFetch<{ entries: EntryDTO[] }>("/api/entries?type=HEALTH&limit=30");
@@ -98,7 +114,6 @@ export default function HealthPage() {
             placeholder="今の気分を顔文字で自由に入力してね"
             aria-label="今の気分や顔文字"
           />
-          <p className={styles.hint}>好きな顔文字を自由に入力してね。</p>
         </fieldset>
         <label className={styles.label} htmlFor="health-note">ひとこと（任意）</label>
         <textarea id="health-note" className={styles.textarea} value={note}
@@ -112,6 +127,33 @@ export default function HealthPage() {
       </section>
 
       <section className={styles.history}>
+        <h2 className={styles.sectionTitle}>体調の変化</h2>
+        <article className={styles.report}>
+          <p className={styles.chartDescription}>最近の報告から、体調の変化をグラフで見られるよ。</p>
+          {chartPoints.length === 0 ? (
+            <p className={styles.empty}>体調を報告すると、ここにグラフが表示されるよ。</p>
+          ) : (
+            <div className={styles.chartWrap}>
+              <div className={styles.chartLegend} aria-hidden="true">
+                <span>元気</span><span>まあまあ</span><span>少し不調</span><span>しんどい</span>
+              </div>
+              <svg className={styles.chart} viewBox="0 0 640 190" role="img" aria-label={"最近の体調の推移：" + chartAccessibleLabel}>
+                {[0, 1, 2, 3].map((level) => (
+                  <line key={level} x1="30" x2="620" y1={20 + level * 42} y2={20 + level * 42} className={styles.chartGrid} />
+                ))}
+                {chartPoints.length > 1 && <polyline points={chartPoints.map((point) => point.x + "," + point.y).join(" ")} className={styles.chartLine} />}
+                {chartPoints.map((point, index) => (
+                  <g key={point.label + "-" + index}>
+                    <circle cx={point.x} cy={point.y} r="5" className={styles.chartDot} />
+                    <text x={point.x} y="177" textAnchor="middle" className={styles.chartDate}>{point.label}</text>
+                    <title>{point.label}：{point.condition}</title>
+                  </g>
+                ))}
+              </svg>
+            </div>
+          )}
+          <p className={styles.chartFootnote}>直近14件を表示。上にあるほど元気、下にあるほどしんどい状態だよ。</p>
+        </article>
         <h2 className={styles.sectionTitle}>最近の報告</h2>
         {loading ? <p className={styles.empty}>読み込み中…</p> :
           entries.length === 0 ? <p className={styles.empty}>まだ報告はありません。最初の報告をしてみよう。</p> :
