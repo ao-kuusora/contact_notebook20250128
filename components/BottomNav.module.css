@@ -152,3 +152,24 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+
+.logout {
+  width: 100%;
+  border: 1px solid var(--c-line);
+  background: #fff9f4;
+  cursor: pointer;
+}
+
+.logout:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.logoutError {
+  grid-column: 1 / -1;
+  padding: 4px 6px;
+  color: var(--c-danger);
+  font-size: 12px;
+  text-align: center;
+}
