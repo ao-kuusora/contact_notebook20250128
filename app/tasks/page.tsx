@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import UserAvatar from "@/components/UserAvatar";
 import styles from "./Tasks.module.css";
 import { apiFetch, sendJson } from "@/lib/api";
 import type { EntryDTO } from "@/lib/types";
@@ -172,7 +173,7 @@ export default function TasksPage() {
                   aria-label={`${entry.content}を${entry.done ? "未完了" : "完了"}にする`} />
                 <span className={styles.taskContent}>
                   <span className={styles.taskTitle}>{entry.content}</span>
-                  <span className={styles.taskMeta}>{entry.authorName}が追加 · {dueLabel(entry.dueDate)}</span>
+                  <span className={styles.taskMeta}><><UserAvatar name={entry.authorName} iconUrl={entry.authorIconUrl} href={`/profile/${entry.userId}`} /> {entry.authorName}</>が追加 · {dueLabel(entry.dueDate)}</span>
                 </span>
               </label>
               <EntryActions entry={entry} onChanged={() => void fetchTasks()} onDeleted={() => void fetchTasks()} />
