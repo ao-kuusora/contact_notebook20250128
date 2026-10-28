@@ -9,7 +9,7 @@ import { useMarkRead } from "@/lib/useEntry";
 const CONDITION_LEVELS = ["元気", "まあまあ", "少し不調", "しんどい"] as const;
 
 function parseReport(content: string) {
-  const match = content.match(/^体調：([^｜]+)｜気分：([^｜]+)(?:｜メモ：([\\s\\S]*))?$/);
+  const match = content.match(/^体調：([^｜]+)｜気分：([^｜]+)(?:｜メモ：([\s\S]*))?$/);
   if (!match) return { condition: content, mood: "", note: "" };
   return { condition: match[1], mood: match[2], note: match[3] ?? "" };
 }
