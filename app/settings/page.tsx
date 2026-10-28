@@ -1,11 +1,12 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from "react";
 import PushNotifications from "@/components/PushNotifications";
 import styles from "./settings.module.css";
 
 type AccountUser = { email: string; displayName: string; iconUrl: string | null };
 type Notice = { type: "success" | "error"; text: string } | null;
+type CropPhoto = { src: string; width: number; height: number };
 
 export default function SettingsPage() {
   const [user, setUser] = useState<AccountUser | null>(null);
@@ -14,7 +15,14 @@ export default function SettingsPage() {
   const [iconUrl, setIconUrl] = useState("");
   const [imageBusy, setImageBusy] = useState(false);
   const [imageNotice, setImageNotice] = useState<Notice>(null);
+  const [cropPhoto, setCropPhoto] = useState<CropPhoto | null>(null);
+  const [cropZoom, setCropZoom] = useState(1);
+  const [cropX, setCropX] = useState(0.5);
+  const [cropY, setCropY] = useState(0.5);
+  const [dragging, setDragging] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const cropFrameRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ x: number; y: number; cropX: number; cropY: number } | null>(null);
   const [email, setEmail] = useState("");
   const [emailPassword, setEmailPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -65,9 +73,7 @@ export default function SettingsPage() {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || "保存できませんでした。");
-      if (action === "profile" && data.user) {
-        setUser((previous) => previous ? { ...previous, ...data.user } : previous);
-      }
+      if (action === "profile" && data.user) setUser((previous) => previous ? { ...previous, ...data.user } : previous);
       if (action === "email" && data.user) {
         setEmail(data.user.email);
         setUser((previous) => previous ? { ...previous, email: data.user.email } : previous);
@@ -95,25 +101,84 @@ export default function SettingsPage() {
       event.target.value = "";
       return;
     }
-    setImageBusy(true);
     try {
-      const compressed = await new Promise<Blob>((resolve, reject) => {
-        const objectUrl = URL.createObjectURL(file);
+      const photo = await new Promise<CropPhoto>((resolve, reject) => {
+        const src = URL.createObjectURL(file);
         const image = new Image();
-        image.onload = () => {
-          URL.revokeObjectURL(objectUrl);
-          const scale = Math.min(1, 512 / Math.max(image.naturalWidth, image.naturalHeight));
-          const canvas = document.createElement("canvas");
-          canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
-          canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
-          const context = canvas.getContext("2d");
-          if (!context) { reject(new Error("写真を処理できませんでした。")); return; }
-          context.drawImage(image, 0, 0, canvas.width, canvas.height);
-          canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("写真を圧縮できませんでした。")), "image/jpeg", 0.78);
-        };
-        image.onerror = () => { URL.revokeObjectURL(objectUrl); reject(new Error("写真を読み込めませんでした。")); };
-        image.src = objectUrl;
+        image.onload = () => resolve({ src, width: image.naturalWidth, height: image.naturalHeight });
+        image.onerror = () => { URL.revokeObjectURL(src); reject(new Error("写真を読み込めませんでした。別の写真をお試しください。")); };
+        image.src = src;
       });
+      setCropPhoto(photo);
+      setCropZoom(1);
+      setCropX(0.5);
+      setCropY(0.5);
+    } catch (error) {
+      setImageNotice({ type: "error", text: error instanceof Error ? error.message : "写真を読み込めませんでした。" });
+    } finally {
+      event.target.value = "";
+    }
+  }
+
+  function startCropDrag(event: ReactPointerEvent<HTMLDivElement>) {
+    if (!cropPhoto) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragRef.current = { x: event.clientX, y: event.clientY, cropX, cropY };
+    setDragging(true);
+  }
+
+  function moveCropDrag(event: ReactPointerEvent<HTMLDivElement>) {
+    if (!dragRef.current || !cropPhoto || !cropFrameRef.current) return;
+    const frame = cropFrameRef.current.getBoundingClientRect();
+    const side = Math.min(cropPhoto.width, cropPhoto.height) / cropZoom;
+    const maxX = Math.max(0, cropPhoto.width - side);
+    const maxY = Math.max(0, cropPhoto.height - side);
+    setCropX(Math.max(0, Math.min(1, dragRef.current.cropX - (event.clientX - dragRef.current.x) / frame.width * maxX / Math.max(1, maxX))));
+    setCropY(Math.max(0, Math.min(1, dragRef.current.cropY - (event.clientY - dragRef.current.y) / frame.height * maxY / Math.max(1, maxY))));
+  }
+
+  function stopCropDrag() {
+    dragRef.current = null;
+    setDragging(false);
+  }
+
+  async function confirmCrop() {
+    if (!cropPhoto || imageBusy) return;
+    setImageBusy(true);
+    setImageNotice(null);
+    try {
+      const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const element = new Image();
+        element.onload = () => resolve(element);
+        element.onerror = () => reject(new Error("写真を読み込めませんでした。"));
+        element.src = cropPhoto.src;
+      });
+      const side = Math.min(cropPhoto.width, cropPhoto.height) / cropZoom;
+      const sx = (cropPhoto.width - side) * cropX;
+      const sy = (cropPhoto.height - side) * cropY;
+      const canvas = document.createElement("canvas");
+      canvas.width = 512;
+      canvas.height = 512;
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("写真を処理できませんでした。");
+      context.drawImage(image, sx, sy, side, side, 0, 0, 512, 512);
+
+      // If the first encode is too large, lower JPEG quality automatically until it fits.
+      let quality = 0.84;
+      let compressed: Blob | null = null;
+      while (quality >= 0.35) {
+        compressed = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
+        if (compressed && compressed.size <= 850 * 1024) break;
+        quality -= 0.1;
+      }
+      if (!compressed) throw new Error("写真を変換できませんでした。");
+      if (compressed.size > 900 * 1024) {
+        canvas.width = 384;
+        canvas.height = 384;
+        context.drawImage(image, sx, sy, side, side, 0, 0, 384, 384);
+        compressed = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.5));
+      }
+      if (!compressed) throw new Error("写真を変換できませんでした。");
       const formData = new FormData();
       formData.append("image", compressed, "profile.jpg");
       const response = await fetch("/api/account/profile-image", { method: "POST", body: formData });
@@ -121,13 +186,18 @@ export default function SettingsPage() {
       if (!response.ok) throw new Error(data.error || "写真を保存できませんでした。");
       setIconUrl(data.iconUrl);
       setUser((previous) => previous ? { ...previous, iconUrl: data.iconUrl } : previous);
-      setImageNotice({ type: "success", text: "プロフィール写真を保存しました。" });
+      setImageNotice({ type: "success", text: "トリミングした写真を保存しました。" });
+      closeCrop();
     } catch (error) {
       setImageNotice({ type: "error", text: error instanceof Error ? error.message : "写真を保存できませんでした。" });
     } finally {
       setImageBusy(false);
-      event.target.value = "";
     }
+  }
+
+  function closeCrop() {
+    if (cropPhoto) URL.revokeObjectURL(cropPhoto.src);
+    setCropPhoto(null);
   }
 
   function savePassword(event: FormEvent<HTMLFormElement>) {
@@ -139,6 +209,11 @@ export default function SettingsPage() {
     }
     void saveSettings(event, "password", { currentPassword, newPassword }, setPasswordNotice, setPasswordBusy);
   }
+
+  const cropScale = cropPhoto ? cropZoom * Math.max(320 / cropPhoto.width, 320 / cropPhoto.height) : 1;
+  const cropSide = cropPhoto ? Math.min(cropPhoto.width, cropPhoto.height) / cropZoom : 1;
+  const cropLeft = cropPhoto ? (cropPhoto.width - cropSide) * cropX : 0;
+  const cropTop = cropPhoto ? (cropPhoto.height - cropSide) * cropY : 0;
 
   return (
     <div className={styles.page}>
@@ -165,9 +240,9 @@ export default function SettingsPage() {
                 <div className={styles.uploadActions}>
                   <input ref={imageInputRef} className={styles.fileInput} type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadPhoto} aria-label="プロフィール写真を選択" />
                   <button className={styles.secondaryButton} type="button" onClick={() => imageInputRef.current?.click()} disabled={imageBusy}>
-                    {imageBusy ? "写真を保存中…" : "スマホの写真から選ぶ"}
+                    スマホの写真から選ぶ
                   </button>
-                  <small>JPEG・PNG・WebPに対応</small>
+                  <small>選んだあとに、位置と拡大率を調整できます。</small>
                 </div>
               </div>
               <NoticeView notice={imageNotice} />
@@ -192,15 +267,8 @@ export default function SettingsPage() {
               <div><h2 id="email-heading">メールアドレス</h2><p>ログインに使用するメールアドレスを変更します。</p></div>
             </div>
             <form className={styles.form} onSubmit={(event) => void saveSettings(event, "email", { email, currentPassword: emailPassword }, setEmailNotice, setEmailBusy)}>
-              <label className={styles.field}>
-                <span>新しいメールアドレス</span>
-                <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required />
-              </label>
-              <label className={styles.field}>
-                <span>現在のパスワード</span>
-                <input type="password" value={emailPassword} onChange={(event) => setEmailPassword(event.target.value)} autoComplete="current-password" required />
-                <small>本人確認のために入力してください。</small>
-              </label>
+              <label className={styles.field}><span>新しいメールアドレス</span><input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required /></label>
+              <label className={styles.field}><span>現在のパスワード</span><input type="password" value={emailPassword} onChange={(event) => setEmailPassword(event.target.value)} autoComplete="current-password" required /><small>本人確認のために入力してください。</small></label>
               <NoticeView notice={emailNotice} />
               <button className={styles.primaryButton} type="submit" disabled={emailBusy}>{emailBusy ? "変更中…" : "メールアドレスを変更"}</button>
             </form>
@@ -212,19 +280,9 @@ export default function SettingsPage() {
               <div><h2 id="password-heading">パスワード変更</h2><p>安全のため、他のサービスと異なるパスワードがおすすめです。</p></div>
             </div>
             <form className={styles.form} onSubmit={savePassword}>
-              <label className={styles.field}>
-                <span>現在のパスワード</span>
-                <input type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} autoComplete="current-password" required />
-              </label>
-              <label className={styles.field}>
-                <span>新しいパスワード</span>
-                <input type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} minLength={8} maxLength={72} autoComplete="new-password" required />
-                <small>8〜72文字</small>
-              </label>
-              <label className={styles.field}>
-                <span>新しいパスワード（確認）</span>
-                <input type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} minLength={8} maxLength={72} autoComplete="new-password" required />
-              </label>
+              <label className={styles.field}><span>現在のパスワード</span><input type="password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} autoComplete="current-password" required /></label>
+              <label className={styles.field}><span>新しいパスワード</span><input type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} minLength={8} maxLength={72} autoComplete="new-password" required /><small>8〜72文字</small></label>
+              <label className={styles.field}><span>新しいパスワード（確認）</span><input type="password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} minLength={8} maxLength={72} autoComplete="new-password" required /></label>
               <NoticeView notice={passwordNotice} />
               <button className={styles.primaryButton} type="submit" disabled={passwordBusy}>{passwordBusy ? "変更中…" : "パスワードを変更"}</button>
             </form>
@@ -244,6 +302,47 @@ export default function SettingsPage() {
             <span>{user?.email || email}</span>
           </section>
         </>
+      )}
+
+      {cropPhoto && (
+        <div className={styles.cropBackdrop} role="presentation">
+          <section className={styles.cropDialog} role="dialog" aria-modal="true" aria-labelledby="crop-title">
+            <h2 id="crop-title">写真をトリミング</h2>
+            <p>写真をドラッグして位置を調整。拡大して、丸いアイコンにしたい部分を選べます。</p>
+            <div
+              ref={cropFrameRef}
+              className={styles.cropFrame}
+              onPointerDown={startCropDrag}
+              onPointerMove={moveCropDrag}
+              onPointerUp={stopCropDrag}
+              onPointerCancel={stopCropDrag}
+              style={{ touchAction: "none", cursor: dragging ? "grabbing" : "grab" }}
+            >
+              <img
+                src={cropPhoto.src}
+                alt="トリミング位置の調整"
+                draggable={false}
+                style={{
+                  width: cropPhoto.width * cropScale,
+                  height: cropPhoto.height * cropScale,
+                  maxWidth: "none",
+                  position: "absolute",
+                  left: -cropLeft * cropScale + (320 - cropSide * cropScale) / 2,
+                  top: -cropTop * cropScale + (320 - cropSide * cropScale) / 2,
+                }}
+              />
+              <div className={styles.cropCircle} />
+            </div>
+            <label className={styles.cropSlider}>
+              <span>拡大・縮小</span>
+              <input type="range" min="1" max="3" step="0.01" value={cropZoom} onChange={(event) => setCropZoom(Number(event.target.value))} />
+            </label>
+            <div className={styles.cropActions}>
+              <button className={styles.secondaryButton} type="button" onClick={closeCrop} disabled={imageBusy}>キャンセル</button>
+              <button className={styles.primaryButton} type="button" onClick={() => void confirmCrop()} disabled={imageBusy}>{imageBusy ? "調整して保存中…" : "この写真に決定"}</button>
+            </div>
+          </section>
+        </div>
       )}
     </div>
   );
