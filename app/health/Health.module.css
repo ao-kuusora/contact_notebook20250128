@@ -142,3 +142,17 @@
   .recentHistory { width: 100%; }
   .recentHistory > .report { box-sizing: border-box; width: 100%; }
 }
+
+
+/* ふたりの体調を区別する折れ線グラフ */
+.chartLegend { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 10px; font-size: 12px; color: var(--c-muted); }
+.chartLegend span { display: inline-flex; align-items: center; gap: 6px; }
+.mineLegend, .partnerLegend { display: inline-block; width: 18px; height: 3px; border-radius: 2px; }
+.mineLegend { background: var(--c-brown-600); }
+.partnerLegend { background: #5B8F8A; }
+.chartLineMine, .chartLinePartner { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.chartLineMine { stroke: var(--c-brown-600); }
+.chartLinePartner { stroke: #5B8F8A; stroke-dasharray: 7 5; }
+.chartDotMine, .chartDotPartner { stroke: #fff; stroke-width: 2; }
+.chartDotMine { fill: var(--c-brown-600); }
+.chartDotPartner { fill: #5B8F8A; }
