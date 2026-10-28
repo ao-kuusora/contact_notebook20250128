@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import PushNotifications from "@/components/PushNotifications";
 import styles from "./settings.module.css";
 
@@ -12,6 +12,9 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [profileName, setProfileName] = useState("");
   const [iconUrl, setIconUrl] = useState("");
+  const [imageBusy, setImageBusy] = useState(false);
+  const [imageNotice, setImageNotice] = useState<Notice>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState("");
   const [emailPassword, setEmailPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -83,6 +86,33 @@ export default function SettingsPage() {
     }
   }
 
+  async function uploadPhoto(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setImageNotice(null);
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setImageNotice({ type: "error", text: "JPEG、PNG、WebP形式の写真を選択してください。" });
+      event.target.value = "";
+      return;
+    }
+    setImageBusy(true);
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      const response = await fetch("/api/account/profile-image", { method: "POST", body: formData });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "写真を保存できませんでした。");
+      setIconUrl(data.iconUrl);
+      setUser((previous) => previous ? { ...previous, iconUrl: data.iconUrl } : previous);
+      setImageNotice({ type: "success", text: "プロフィール写真を保存しました。" });
+    } catch (error) {
+      setImageNotice({ type: "error", text: error instanceof Error ? error.message : "写真を保存できませんでした。" });
+    } finally {
+      setImageBusy(false);
+      event.target.value = "";
+    }
+  }
+
   function savePassword(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPasswordNotice(null);
@@ -111,9 +141,19 @@ export default function SettingsPage() {
               <div><h2 id="profile-heading">プロフィール編集</h2><p>相手に表示されるあなたの情報です。</p></div>
             </div>
             <form className={styles.form} onSubmit={(event) => void saveSettings(event, "profile", { displayName: profileName, iconUrl }, setProfileNotice, setProfileBusy)}>
-              <div className={styles.avatarPreview}>
-                {iconUrl ? <img src={iconUrl} alt="プロフィール画像プレビュー" /> : <span aria-hidden="true">{profileName.trim().charAt(0) || "♡"}</span>}
+              <div className={styles.avatarUpload}>
+                <div className={styles.avatarPreview}>
+                  {iconUrl ? <img src={iconUrl} alt="プロフィール画像プレビュー" /> : <span aria-hidden="true">{profileName.trim().charAt(0) || "♡"}</span>}
+                </div>
+                <div className={styles.uploadActions}>
+                  <input ref={imageInputRef} className={styles.fileInput} type="file" accept="image/jpeg,image/png,image/webp" onChange={uploadPhoto} aria-label="プロフィール写真を選択" />
+                  <button className={styles.secondaryButton} type="button" onClick={() => imageInputRef.current?.click()} disabled={imageBusy}>
+                    {imageBusy ? "写真を保存中…" : "スマホの写真から選ぶ"}
+                  </button>
+                  <small>JPEG・PNG・WebPに対応</small>
+                </div>
               </div>
+              <NoticeView notice={imageNotice} />
               <label className={styles.field}>
                 <span>表示名</span>
                 <input value={profileName} onChange={(event) => setProfileName(event.target.value)} maxLength={50} required placeholder="表示名を入力" />
@@ -121,7 +161,7 @@ export default function SettingsPage() {
               </label>
               <label className={styles.field}>
                 <span>アイコン画像URL <em>任意</em></span>
-                <input type="url" value={iconUrl} onChange={(event) => setIconUrl(event.target.value)} placeholder="https://example.com/icon.png" />
+                <input type="url" value={iconUrl.startsWith("data:") ? "" : iconUrl} onChange={(event) => setIconUrl(event.target.value)} placeholder="https://example.com/icon.png" />
                 <small>画像URLを空欄にすると、表示名の頭文字を表示します。</small>
               </label>
               <NoticeView notice={profileNotice} />
