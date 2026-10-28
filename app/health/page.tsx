@@ -41,7 +41,7 @@ export default function HealthPage() {
       else item.partner = report.condition;
       chartByDay.set(day, item);
     });
-  const chartEntries = [...chartByDay.entries()].slice(-14);
+  const chartEntries = [...chartByDay.entries()].slice(-10);
   const plotLeft = 92;
   const plotRight = 620;
   const plotTop = 28;
@@ -184,7 +184,7 @@ export default function HealthPage() {
               </svg>
             </div>
           )}
-          <p className={styles.chartFootnote}>直近14日分のふたりの体調を表示。上ほど元気、下ほどしんどい状態だよ。</p>
+          <p className={styles.chartFootnote}>直近10日分のふたりの体調を表示。上ほど元気、下ほどしんどい状態だよ。</p>
         </article>
       </section>
       </div>
