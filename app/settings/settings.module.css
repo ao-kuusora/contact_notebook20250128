@@ -302,3 +302,16 @@
   font-size: 12px;
 }
 
+
+.cropBackdrop{position:fixed;z-index:1000;inset:0;display:grid;place-items:center;overflow-y:auto;padding:18px;background:rgb(24 19 16 / 68%)}
+.cropDialog{width:min(100%,430px);max-height:calc(100dvh - 36px);overflow-y:auto;padding:22px;border-radius:18px;background:#fff;box-shadow:0 20px 70px rgb(0 0 0 / 25%)}
+.cropDialog h2{color:var(--c-brown-900);font-size:20px;font-weight:800}
+.cropDialog>p{margin:7px 0 16px;color:var(--c-muted);font-size:13px;line-height:1.65}
+.cropFrame{position:relative;width:min(100%,320px);aspect-ratio:1;margin:0 auto 18px;overflow:hidden;border-radius:50%;background:#211d1a;touch-action:none;user-select:none}
+.cropFrame img{pointer-events:none;user-select:none}
+.cropCircle{position:absolute;inset:0;border:2px solid rgb(255 255 255 / 92%);border-radius:50%;box-shadow:0 0 0 999px rgb(0 0 0 / 12%);pointer-events:none}
+.cropSlider{display:grid;gap:8px;color:var(--c-text);font-size:13px;font-weight:700}
+.cropSlider input{width:100%;accent-color:var(--c-brown-600)}
+.cropActions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.cropActions button{flex:1}
+@media(max-width:420px){.cropDialog{padding:17px}.cropActions{flex-direction:column-reverse}}
