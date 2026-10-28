@@ -50,32 +50,40 @@ export async function GET() {
     }
 
     const coupleId = user.coupleId;
-    const latestOf = (type: string) =>
+    // 日付の境界は日本時間。家事・忙しさは当日分だけ残し、古い行はDBからも削除。
+    const now = new Date();
+    const jstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+    const jstMidnight = new Date(Date.UTC(jstNow.getUTCFullYear(), jstNow.getUTCMonth(), jstNow.getUTCDate()) - 9 * 60 * 60 * 1000);
+    const yesterday = new Date(jstMidnight.getTime() - 24 * 60 * 60 * 1000);
+    const healthSince = new Date(jstMidnight.getTime() - 9 * 24 * 60 * 60 * 1000);
+    await prisma.entry.deleteMany({ where: { coupleId, type: { in: ["CHORE", "WORKLOAD"] }, createdAt: { lt: jstMidnight } } });
+    await prisma.entry.deleteMany({ where: { coupleId, type: "HEALTH", createdAt: { lt: healthSince } } });
+    const latestOf = (type: string, extraWhere: Record<string, unknown> = {}) =>
       prisma.entry.findFirst({
-        where: { coupleId, type },
+        where: { coupleId, type, ...extraWhere },
         orderBy: { createdAt: "desc" },
-        include: { user: { select: { displayName: true } } },
+        include: { user: { select: { displayName: true, iconUrl: true } } },
       });
 
     const [unread, latestChore, urgentErrand, todayWorkload, latestDiary, latestTask, latestHealth] =
       await Promise.all([
         // 未読バッジの判定は /api/unread と同じ関数を使う
         readRepo.unreadByType(user.id, coupleId),
-        latestOf("CHORE"),
+        latestOf("CHORE", { createdAt: { gte: jstMidnight } }),
         // 期限があって未完了のおつかいのうち、期限が一番近いもの
         prisma.entry.findFirst({
           where: { coupleId, type: "ERRAND", done: false, dueDate: { not: null } },
           orderBy: { dueDate: "asc" },
           include: { user: { select: { displayName: true } } },
         }),
-        latestOf("WORKLOAD"),
+        latestOf("WORKLOAD", { createdAt: { gte: jstMidnight } }),
         latestOf("DIARY"),
         latestOf("TASK"),
-        latestOf("HEALTH"),
+        latestOf("HEALTH", { createdAt: { gte: healthSince } }),
       ]);
 
     const shape = (e: (typeof latestChore)) =>
-      e ? { ...e, isMine: e.userId === user.id, authorName: e.user.displayName } : null;
+      e ? { ...e, isMine: e.userId === user.id, authorName: e.user.displayName, authorIconUrl: e.user.iconUrl } : null;
 
     return NextResponse.json({
       user,
