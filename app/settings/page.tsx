@@ -97,8 +97,25 @@ export default function SettingsPage() {
     }
     setImageBusy(true);
     try {
+      const compressed = await new Promise<Blob>((resolve, reject) => {
+        const objectUrl = URL.createObjectURL(file);
+        const image = new Image();
+        image.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          const scale = Math.min(1, 512 / Math.max(image.naturalWidth, image.naturalHeight));
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+          canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+          const context = canvas.getContext("2d");
+          if (!context) { reject(new Error("写真を処理できませんでした。")); return; }
+          context.drawImage(image, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("写真を圧縮できませんでした。")), "image/jpeg", 0.78);
+        };
+        image.onerror = () => { URL.revokeObjectURL(objectUrl); reject(new Error("写真を読み込めませんでした。")); };
+        image.src = objectUrl;
+      });
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("image", compressed, "profile.jpg");
       const response = await fetch("/api/account/profile-image", { method: "POST", body: formData });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || "写真を保存できませんでした。");
