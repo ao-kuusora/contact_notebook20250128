@@ -87,6 +87,24 @@ export default function DashboardPage() {
         {user.couple?.users?.filter((member) => member.id !== user.id).map((member) => <p className={styles.subtitle} key={member.id}><UserAvatar name={member.displayName} iconUrl={member.iconUrl} href={`/profile/${member.id}`} /> <Link href={`/profile/${member.id}`}>{member.displayName} さんのプロフィールを見る</Link></p>)}
       </div>
 
+      {data.latestByPerson && data.latestByPerson.length > 0 && (
+        <section className={styles.card} aria-label="ふたりの最新入力">
+          <h2 className={styles.cardTitle}>ふたりの最新入力</h2>
+          <div className={styles.latestPeopleList}>
+            {data.latestByPerson.map((entry) => (
+              <div className={styles.latestPersonRow} key={entry.id}>
+                <UserAvatar name={entry.authorName} iconUrl={entry.authorIconUrl} href={`/profile/${entry.userId}`} />
+                <div className={styles.latestPersonContent}>
+                  <p><strong>{entry.authorName}</strong> · {{ CHORE: "家事報告", ERRAND: "おつかいメモ", TASK: "タスク", DIARY: "交換日記", HEALTH: "体調", WORKLOAD: "仕事の忙しさ" }[entry.type] || entry.type}</p>
+                  <p>{entry.content.length > 100 ? `${entry.content.slice(0, 100)}…` : entry.content}</p>
+                  <time>{new Date(entry.createdAt).toLocaleString("ja-JP")}</time>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <div className={styles.panelList}>
         {/* 家事 */}
         <Link href="/chores" className={styles.card}>
