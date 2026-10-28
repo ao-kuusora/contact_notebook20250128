@@ -1,0 +1,254 @@
+.page {
+  width: min(100%, 860px);
+  margin: 0 auto;
+  padding: 28px 24px 40px;
+  color: var(--c-text);
+}
+
+.heading {
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--c-brown-500);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .13em;
+}
+
+.heading h1 {
+  color: var(--c-brown-900);
+  font-size: 28px;
+  font-weight: 750;
+  letter-spacing: .02em;
+}
+
+.heading p {
+  margin-top: 7px;
+  color: var(--c-muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.section {
+  margin-top: 16px;
+  padding: 22px;
+  border: 1px solid var(--c-line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgb(85 57 36 / 4%);
+}
+
+.sectionHeading {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.sectionIcon {
+  display: grid;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 12px;
+  background: #f6ebe1;
+  color: var(--c-brown-600);
+  font-size: 21px;
+}
+
+.sectionHeading h2 {
+  color: var(--c-brown-900);
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.sectionHeading p {
+  margin-top: 3px;
+  color: var(--c-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.form {
+  display: grid;
+  gap: 16px;
+}
+
+.avatarPreview {
+  display: grid;
+  width: 76px;
+  height: 76px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--c-line);
+  border-radius: 50%;
+  background: #f6ebe1;
+  color: var(--c-brown-600);
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.avatarPreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+  color: var(--c-text);
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.field em {
+  margin-left: 5px;
+  color: var(--c-faint);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.field input {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 13px;
+  border: 1px solid var(--c-input-line);
+  border-radius: 8px;
+  background: var(--c-input-bg);
+  outline-offset: 2px;
+  font-weight: 400;
+}
+
+.field input:focus {
+  border-color: var(--c-brown-600);
+  outline: 2px solid rgb(139 94 60 / 13%);
+}
+
+.field small {
+  color: var(--c-muted);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.primaryButton {
+  min-height: 46px;
+  padding: 11px 18px;
+  border: 1px solid var(--c-brown-600);
+  border-radius: 9px;
+  background: var(--c-brown-600);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  transition: background .15s ease, opacity .15s ease;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: var(--c-brown-900);
+}
+
+.primaryButton:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.successNotice,
+.errorNotice {
+  padding: 11px 13px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.successNotice {
+  border: 1px solid #d8e8d5;
+  background: #f4faf2;
+  color: #32633a;
+}
+
+.errorNotice {
+  border: 1px solid #f0cfca;
+  background: #fff5f3;
+  color: #a33f32;
+}
+
+.notificationSection {
+  margin-top: 16px;
+  padding: 22px;
+  border: 1px solid var(--c-line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgb(85 57 36 / 4%);
+}
+
+.notificationSection :global(section) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.accountSummary {
+  display: grid;
+  gap: 4px;
+  margin-top: 16px;
+  padding: 17px 20px;
+  border-radius: 12px;
+  background: var(--c-surface);
+  overflow-wrap: anywhere;
+}
+
+.summaryLabel {
+  color: var(--c-muted);
+  font-size: 12px;
+}
+
+.accountSummary strong {
+  color: var(--c-brown-900);
+  font-size: 15px;
+}
+
+.accountSummary > span:last-child {
+  color: var(--c-muted);
+  font-size: 13px;
+}
+
+.loading {
+  padding: 36px 12px;
+  color: var(--c-muted);
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 22px 14px 28px;
+  }
+
+  .heading h1 {
+    font-size: 25px;
+  }
+
+  .section,
+  .notificationSection {
+    padding: 17px;
+    border-radius: 12px;
+  }
+
+  .sectionHeading {
+    gap: 10px;
+  }
+
+  .sectionIcon {
+    flex-basis: 36px;
+    width: 36px;
+    height: 36px;
+  }
+}
