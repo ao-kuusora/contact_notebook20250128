@@ -12,6 +12,7 @@ const protectedPaths = [
   "/workload",
   "/diary",
   "/couple",
+  "/settings",
 ];
 
 export function middleware(req: NextRequest) {
@@ -35,5 +36,6 @@ export const config = {
     "/workload/:path*",
     "/diary/:path*",
     "/couple/:path*",
+    "/settings/:path*",
   ],
 };
