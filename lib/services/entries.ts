@@ -15,6 +15,7 @@ export type EntryRow = {
   coupleId: string;
   createdAt: Date;
   authorName: string;
+  authorIconUrl?: string | null;
   /** 閲覧者が既読にしているか */
   isRead: boolean;
 };
@@ -58,7 +59,8 @@ export function toEntryDto(row: EntryRow, viewerId: string) {
     // 自分の投稿は読む必要がないので常に既読扱い
     isRead: isMine || row.isRead,
     authorName: row.authorName,
-    user: { displayName: row.authorName },
+    authorIconUrl: row.authorIconUrl ?? null,
+    user: { displayName: row.authorName, iconUrl: row.authorIconUrl ?? null },
   };
 }
 
