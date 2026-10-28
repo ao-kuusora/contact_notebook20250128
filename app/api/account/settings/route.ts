@@ -27,7 +27,7 @@ export async function PATCH(req: Request) {
       if (!isNonEmptyString(displayName, 50)) {
         return NextResponse.json({ error: "表示名は1〜50文字で入力してください。" }, { status: 400 });
       }
-      if (iconUrl) {
+      if (iconUrl && !/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(iconUrl)) {
         try {
           const parsed = new URL(iconUrl);
           if (parsed.protocol !== "https:" && parsed.protocol !== "http:") throw new Error();
