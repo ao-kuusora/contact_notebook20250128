@@ -5,6 +5,7 @@ import styles from "./Health.module.css";
 import { apiFetch, sendJson } from "@/lib/api";
 import type { EntryDTO } from "@/lib/types";
 import { useMarkRead } from "@/lib/useEntry";
+import EntryActions from "@/components/EntryActions";
 
 const CONDITION_LEVELS = ["元気", "まあまあ", "少し不調", "しんどい"] as const;
 
@@ -201,6 +202,7 @@ export default function HealthPage() {
                 <p className={styles.reportLine}>体調：{report.condition}</p>
                 {report.mood && <p className={styles.reportLine}>気分：{report.mood}</p>}
                 {report.note && <p className={styles.reportNote}>{report.note.replace(/^メモ：/, "")}</p>}
+                <EntryActions entry={entry} onChanged={() => void fetchReports()} onDeleted={() => void fetchReports()} />
               </article>
             );
           })}
