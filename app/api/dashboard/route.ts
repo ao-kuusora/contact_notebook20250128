@@ -77,7 +77,7 @@ export async function GET() {
         latestOf("HEALTH", { createdAt: { gte: healthSince } }),
       ]);
 
-    const shape = (e: (typeof latestChore)) =>
+    const shape = (e: any) =>
       e ? { ...e, isMine: e.userId === user.id, authorName: e.user.displayName, authorIconUrl: e.user.iconUrl } : null;
 
     return NextResponse.json({
