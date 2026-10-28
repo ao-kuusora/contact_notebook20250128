@@ -5,6 +5,7 @@ import styles from "./Tasks.module.css";
 import { apiFetch, sendJson } from "@/lib/api";
 import type { EntryDTO } from "@/lib/types";
 import { MAX_CONTENT_LENGTH } from "@/lib/validate";
+import EntryActions from "@/components/EntryActions";
 
 type Filter = "open" | "done" | "all";
 
@@ -174,6 +175,7 @@ export default function TasksPage() {
                   <span className={styles.taskMeta}>{entry.authorName}が追加 · {dueLabel(entry.dueDate)}</span>
                 </span>
               </label>
+              <EntryActions entry={entry} onChanged={() => void fetchTasks()} onDeleted={() => void fetchTasks()} />
             </li>
           ))}
         </ul>
