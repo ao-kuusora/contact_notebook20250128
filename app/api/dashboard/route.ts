@@ -90,6 +90,7 @@ export async function GET() {
         latestOf("HEALTH", { createdAt: { gte: healthSince } }),
       ]);
 
+    // 各クエリで user.iconUrl を取得し、入力者情報を共通形式に整える。
     const shape = (e: any) =>
       e ? { ...e, isMine: e.userId === user.id, authorName: e.user.displayName, authorIconUrl: e.user.iconUrl } : null;
 
