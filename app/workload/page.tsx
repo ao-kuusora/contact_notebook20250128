@@ -5,6 +5,7 @@ import styles from "./Workload.module.css";
 import { apiFetch, sendJson } from "@/lib/api";
 import type { EntryDTO } from "@/lib/types";
 import { useMarkRead } from "@/lib/useEntry";
+import EntryActions from "@/components/EntryActions";
 
 const LEVELS = ["とても忙しい", "普通", "余裕あり", "飲みあり"];
 
@@ -116,6 +117,7 @@ export default function WorkloadPage() {
               </span>
             </p>
           )}
+          {latestMine && <EntryActions entry={latestMine} onChanged={() => void fetchEntries()} onDeleted={() => void fetchEntries()} />}
         </div>
       )}
     </div>
