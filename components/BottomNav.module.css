@@ -75,25 +75,78 @@
   font-weight: 700;
 }
 
-@media (min-width: 601px) {
+.logout {
+  width: 100%;
+  border: 1px solid #efc2bd;
+  background: #fff5f4;
+  color: #c0392b;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logout:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.logoutError {
+  grid-column: 1 / -1;
+  padding: 4px 6px;
+  color: var(--c-danger);
+  font-size: 12px;
+  text-align: center;
+}
+
+@media (min-width: 900px) {
   .nav {
-    padding-left: 24px;
-    padding-right: 24px;
+    top: var(--topbar-h);
+    right: auto;
+    bottom: 0;
+    left: 0;
+    width: 232px;
+    padding: 28px 16px;
+    border-top: 0;
+    border-right: 1px solid var(--c-line);
+    background: #fbf6f1;
+    box-shadow: 4px 0 24px rgb(85 57 36 / 4%);
   }
 
-  .links {
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    max-width: 1100px;
-    margin: 0 auto;
-    gap: 10px;
+  .toggle {
+    display: none;
+  }
+
+  .links,
+  .links[hidden] {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0;
   }
 
   .item {
-    font-size: 14px;
+    justify-content: flex-start;
+    min-height: 48px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 15px;
+  }
+
+  .active {
+    background: #efe3d7;
+    box-shadow: inset 3px 0 0 var(--c-brown-600);
+  }
+
+  .logout {
+    margin-top: 20px;
+    justify-content: center;
+  }
+
+  .logoutError {
+    text-align: left;
   }
 }
 
-/* スマホでは右上の小さなハンバーガーボタンに収納 */
+/* スマートフォンでは右上の小さなメニューボタンに収納 */
 @media (max-width: 600px) {
   .nav {
     top: calc(env(safe-area-inset-top, 0px) + 8px);
@@ -151,46 +204,4 @@
   .links {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-}
-
-
-.logout {
-  width: 100%;
-  border: 1px solid var(--c-line);
-  background: #fff9f4;
-  cursor: pointer;
-}
-
-.logout:disabled {
-  opacity: 0.6;
-  cursor: wait;
-}
-
-.logoutError {
-  grid-column: 1 / -1;
-  padding: 4px 6px;
-  color: var(--c-danger);
-  font-size: 12px;
-  text-align: center;
-}
-
-.logout {
-  color: #c0392b;
-  border: 1px solid #efc2bd;
-  background: #fff5f4;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.logout:disabled {
-  opacity: 0.6;
-  cursor: wait;
-}
-
-.logoutError {
-  grid-column: 1 / -1;
-  padding: 4px 6px;
-  color: var(--c-danger);
-  font-size: 12px;
-  text-align: center;
 }
