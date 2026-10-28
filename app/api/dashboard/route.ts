@@ -10,8 +10,6 @@ export const dynamic = "force-dynamic";
 const NO_UNREAD = { chores: false, errands: false, workload: false, diary: false };
 
 // ダッシュボードに必要なデータを 1 リクエストにまとめて返す。
-// 以前はブラウザから 6 本の API を (一部は直列で) 呼んでおり、そのたびに
-// 認証 + DB 往復が発生していたため、ここで認証 1 回 + クエリ並列にする。
 export async function GET() {
   try {
     const userId = getSessionUserId();
@@ -47,12 +45,14 @@ export async function GET() {
         latestDiary: null,
         latestTask: null,
         latestHealth: null,
+        latestByPerson: [],
       });
     }
 
     const coupleId = user.coupleId;
     // 日付が変わった後、表示前に期限切れの記録をDBから整理する。
     const { midnight: jstMidnight, healthSince } = await cleanupDailyEntries(coupleId);
+
     const latestOf = (type: string, extraWhere: Record<string, unknown> = {}) =>
       prisma.entry.findFirst({
         where: { coupleId, type, ...extraWhere },
@@ -61,27 +61,39 @@ export async function GET() {
       });
 
     const latestPersonEntriesRaw = await prisma.entry.findMany({
-      where: { coupleId, type: { in: ["CHORE", "ERRAND", "TASK", "DIARY", "HEALTH", "WORKLOAD"] }, ...( { OR: [{ type: { not: "HEALTH" } }, { type: "HEALTH", createdAt: { gte: healthSince } }] } ) },
+      where: {
+        coupleId,
+        type: { in: ["CHORE", "ERRAND", "TASK", "DIARY", "HEALTH", "WORKLOAD"] },
+        OR: [
+          { type: { not: "HEALTH" } },
+          { type: "HEALTH", createdAt: { gte: healthSince } },
+        ],
+      },
       orderBy: { createdAt: "desc" },
       take: 100,
       include: { user: { select: { displayName: true, iconUrl: true } } },
     });
+
     const latestByPersonMap = new Map<string, (typeof latestPersonEntriesRaw)[number]>();
     for (const entry of latestPersonEntriesRaw) {
       const key = `${entry.type}:${entry.userId}`;
       if (!latestByPersonMap.has(key)) latestByPersonMap.set(key, entry);
     }
-    const latestByPerson = [...latestByPersonMap.values()].map((entry) => ({ ...entry, authorName: entry.user.displayName, authorIconUrl: entry.user.iconUrl, isMine: entry.userId === user.id }));
+    const latestByPerson = [...latestByPersonMap.values()].map((entry) => ({
+      ...entry,
+      authorName: entry.user.displayName,
+      authorIconUrl: entry.user.iconUrl,
+      isMine: entry.userId === user.id,
+    }));
 
     const [unread, latestChore, urgentErrand, todayWorkload, latestDiary, latestTask, latestHealth] =
       await Promise.all([
-        // 未読バッジの判定は /api/unread と同じ関数を使う
         readRepo.unreadByType(user.id, coupleId),
         latestOf("CHORE", { createdAt: { gte: jstMidnight } }),
-        // 期限があって未完了のおつかいのうち、期限が一番近いもの
         prisma.entry.findFirst({
           where: { coupleId, type: "ERRAND", done: false, dueDate: { not: null } },
           orderBy: { dueDate: "asc" },
+          // shape() で使う入力者情報は、すべての取得クエリで同じフィールドを選択する。
           include: { user: { select: { displayName: true, iconUrl: true } } },
         }),
         latestOf("WORKLOAD", { createdAt: { gte: jstMidnight } }),
@@ -90,9 +102,16 @@ export async function GET() {
         latestOf("HEALTH", { createdAt: { gte: healthSince } }),
       ]);
 
-    // 各クエリで user.iconUrl を取得し、入力者情報を共通形式に整える。
-    const shape = (e: any) =>
-      e ? { ...e, isMine: e.userId === user.id, authorName: e.user.displayName, authorIconUrl: e.user.iconUrl } : null;
+    // 明示的な戻り値型を付け、各クエリの Prisma 推論型の差でビルドが止まらないようにする。
+    const shape = (e: any): any =>
+      e
+        ? {
+            ...e,
+            isMine: e.userId === user.id,
+            authorName: e.user.displayName,
+            authorIconUrl: e.user.iconUrl ?? null,
+          }
+        : null;
 
     return NextResponse.json({
       user,
