@@ -6,7 +6,7 @@ import type { ReadRepo } from "@/lib/services/read";
 /** 閲覧者の既読状態だけを取る include (全員分を JOIN しない) */
 const entryInclude = (viewerId: string) =>
   ({
-    user: { select: { displayName: true } },
+    user: { select: { displayName: true, iconUrl: true } },
     readStatus: {
       where: { userId: viewerId },
       select: { isRead: true },
@@ -22,7 +22,7 @@ type RowWithRelations = {
   userId: string;
   coupleId: string;
   createdAt: Date;
-  user: { displayName: string };
+  user: { displayName: string; iconUrl: string | null };
   readStatus: { isRead: boolean }[];
 };
 
@@ -37,6 +37,7 @@ function toRow(r: RowWithRelations): EntryRow {
     coupleId: r.coupleId,
     createdAt: r.createdAt,
     authorName: r.user.displayName,
+    authorIconUrl: r.user.iconUrl,
     isRead: r.readStatus.some((s) => s.isRead),
   };
 }
