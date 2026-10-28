@@ -69,7 +69,7 @@ export async function GET() {
         prisma.entry.findFirst({
           where: { coupleId, type: "ERRAND", done: false, dueDate: { not: null } },
           orderBy: { dueDate: "asc" },
-          include: { user: { select: { displayName: true } } },
+          include: { user: { select: { displayName: true, iconUrl: true } } },
         }),
         latestOf("WORKLOAD", { createdAt: { gte: jstMidnight } }),
         latestOf("DIARY"),
