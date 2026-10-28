@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import styles from "./Dashboard.module.css";
 import { apiFetch, sendJson } from "@/lib/api";
 import type { DashboardDTO } from "@/lib/types";
+import UserAvatar from "@/components/UserAvatar";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -82,7 +83,8 @@ export default function DashboardPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>{today}</h1>
-        <p className={styles.subtitle}>{user.displayName} さん</p>
+        <p className={styles.subtitle}><UserAvatar name={user.displayName} iconUrl={user.iconUrl} href={`/profile/${user.id}`} /> {user.displayName} さん</p>
+        {user.couple?.users?.filter((member) => member.id !== user.id).map((member) => <p className={styles.subtitle} key={member.id}><UserAvatar name={member.displayName} iconUrl={member.iconUrl} href={`/profile/${member.id}`} /> <Link href={`/profile/${member.id}`}>{member.displayName} さんのプロフィールを見る</Link></p>)}
       </div>
 
       <div className={styles.panelList}>
@@ -93,12 +95,13 @@ export default function DashboardPage() {
             {choresUnread && <span className={styles.badge}></span>}
           </h2>
           {latestChore ? (
-            <p className={styles.cardText}>
-              最新: {latestChore.content}（
-              {new Date(latestChore.createdAt).toLocaleDateString()}）
-            </p>
+            <>
+              <p className={styles.cardText}><UserAvatar name={latestChore.authorName} iconUrl={latestChore.authorIconUrl} href={`/profile/${latestChore.userId}`} /> <strong>{latestChore.authorName}</strong> さんが入力</p>
+              <p className={styles.cardText}>{latestChore.content}</p>
+              <p className={styles.cardEmpty}>{new Date(latestChore.createdAt).toLocaleString("ja-JP")}</p>
+            </>
           ) : (
-            <p className={styles.cardEmpty}>まだ報告がありません</p>
+            <p className={styles.cardEmpty}>本日の入力はまだです</p>
           )}
         </Link>
 
@@ -127,7 +130,7 @@ export default function DashboardPage() {
             <>
               <p className={styles.cardText}>{latestTask.content}</p>
               <p className={styles.cardEmpty}>
-                入力者：{latestTask.authorName} さん · {new Date(latestTask.createdAt).toLocaleString("ja-JP")}
+                <UserAvatar name={latestTask.authorName} iconUrl={latestTask.authorIconUrl} href={`/profile/${latestTask.userId}`} /> 入力者：{latestTask.authorName} さん · {new Date(latestTask.createdAt).toLocaleString("ja-JP")}
                 {latestTask.done ? " · 完了" : " · 未完了"}
               </p>
             </>
@@ -141,12 +144,12 @@ export default function DashboardPage() {
           <h2 className={styles.cardTitle}>今日の体調</h2>
           {latestHealth ? (
             <>
-              <p className={styles.cardText}>入力者：{latestHealth.authorName} さん</p>
+              <p className={styles.cardText}><UserAvatar name={latestHealth.authorName} iconUrl={latestHealth.authorIconUrl} href={`/profile/${latestHealth.userId}`} /> 入力者：{latestHealth.authorName} さん</p>
               <p className={styles.cardText}>{latestHealth.content.split("｜").slice(0, 2).join(" · ")}</p>
               <p className={styles.cardEmpty}>{new Date(latestHealth.createdAt).toLocaleString("ja-JP")}</p>
             </>
           ) : (
-            <p className={styles.cardEmpty}>まだ体調報告はありません</p>
+            <p className={styles.cardEmpty}>本日の入力はまだです</p>
           )}
         </Link>
 
@@ -157,9 +160,9 @@ export default function DashboardPage() {
             {workloadUnread && <span className={styles.badge}></span>}
           </h2>
           {todayWorkload ? (
-            <p className={styles.cardText}>今日: {todayWorkload.content}</p>
+            <><p className={styles.cardText}><UserAvatar name={todayWorkload.authorName} iconUrl={todayWorkload.authorIconUrl} href={`/profile/${todayWorkload.userId}`} /> {todayWorkload.authorName} さんの入力</p><p className={styles.cardText}>今日: {todayWorkload.content}</p><p className={styles.cardEmpty}>{new Date(todayWorkload.createdAt).toLocaleString("ja-JP")}</p></>
           ) : (
-            <p className={styles.cardEmpty}>まだ送信されていません</p>
+            <p className={styles.cardEmpty}>本日の入力はまだです</p>
           )}
         </Link>
 
@@ -172,8 +175,8 @@ export default function DashboardPage() {
 
           {latestDiary ? (
             <p className={styles.cardText}>
-              {latestDiary.authorName} さんが更新
-              （{new Date(latestDiary.createdAt).toLocaleString()}）
+              <UserAvatar name={latestDiary.authorName} iconUrl={latestDiary.authorIconUrl} href={`/profile/${latestDiary.userId}`} /> {latestDiary.authorName} さんが更新
+              （{new Date(latestDiary.createdAt).toLocaleString()}）<br />{latestDiary.content.length > 70 ? `${latestDiary.content.slice(0, 70)}…` : latestDiary.content}
             </p>
           ) : (
             <p className={styles.cardEmpty}>まだ日記がありません</p>
