@@ -7,3 +7,14 @@
   width: 100%;
   margin: 0 auto;
 }
+
+@media (min-width: 900px) {
+  .wrapper {
+    padding-left: 232px;
+    padding-bottom: 0;
+  }
+
+  .main {
+    min-height: calc(100vh - var(--topbar-h));
+  }
+}
