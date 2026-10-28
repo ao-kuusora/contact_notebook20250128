@@ -23,6 +23,8 @@ export default function SettingsPage() {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const cropFrameRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ x: number; y: number; cropX: number; cropY: number } | null>(null);
+  const pointersRef = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const pinchRef = useRef<{ distance: number; zoom: number } | null>(null);
   const [email, setEmail] = useState("");
   const [emailPassword, setEmailPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -123,23 +125,51 @@ export default function SettingsPage() {
   function startCropDrag(event: ReactPointerEvent<HTMLDivElement>) {
     if (!cropPhoto) return;
     event.currentTarget.setPointerCapture(event.pointerId);
+    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (pointersRef.current.size >= 2) {
+      const points = [...pointersRef.current.values()];
+      const distance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+      pinchRef.current = { distance: Math.max(1, distance), zoom: cropZoom };
+      dragRef.current = null;
+      setDragging(false);
+      return;
+    }
     dragRef.current = { x: event.clientX, y: event.clientY, cropX, cropY };
     setDragging(true);
   }
 
   function moveCropDrag(event: ReactPointerEvent<HTMLDivElement>) {
-    if (!dragRef.current || !cropPhoto || !cropFrameRef.current) return;
+    if (!cropPhoto || !cropFrameRef.current || !pointersRef.current.has(event.pointerId)) return;
+    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (pointersRef.current.size >= 2) {
+      const points = [...pointersRef.current.values()];
+      const distance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+      if (pinchRef.current) {
+        setCropZoom(Math.max(1, Math.min(3, pinchRef.current.zoom * distance / pinchRef.current.distance)));
+      }
+      return;
+    }
+    if (!dragRef.current) return;
     const frame = cropFrameRef.current.getBoundingClientRect();
     const side = Math.min(cropPhoto.width, cropPhoto.height) / cropZoom;
     const maxX = Math.max(0, cropPhoto.width - side);
     const maxY = Math.max(0, cropPhoto.height - side);
-    setCropX(Math.max(0, Math.min(1, dragRef.current.cropX - (event.clientX - dragRef.current.x) / frame.width * maxX / Math.max(1, maxX))));
-    setCropY(Math.max(0, Math.min(1, dragRef.current.cropY - (event.clientY - dragRef.current.y) / frame.height * maxY / Math.max(1, maxY))));
+    const scale = cropZoom * Math.max(320 / cropPhoto.width, 320 / cropPhoto.height);
+    setCropX(Math.max(0, Math.min(1, dragRef.current.cropX - (event.clientX - dragRef.current.x) / Math.max(1, scale * maxX))));
+    setCropY(Math.max(0, Math.min(1, dragRef.current.cropY - (event.clientY - dragRef.current.y) / Math.max(1, scale * maxY))));
   }
 
-  function stopCropDrag() {
+  function stopCropDrag(event: ReactPointerEvent<HTMLDivElement>) {
+    pointersRef.current.delete(event.pointerId);
+    pinchRef.current = null;
     dragRef.current = null;
-    setDragging(false);
+    if (pointersRef.current.size === 1) {
+      const [point] = [...pointersRef.current.values()];
+      dragRef.current = { x: point.x, y: point.y, cropX, cropY };
+      setDragging(true);
+    } else {
+      setDragging(false);
+    }
   }
 
   async function confirmCrop() {
@@ -308,7 +338,7 @@ export default function SettingsPage() {
         <div className={styles.cropBackdrop} role="presentation">
           <section className={styles.cropDialog} role="dialog" aria-modal="true" aria-labelledby="crop-title">
             <h2 id="crop-title">写真をトリミング</h2>
-            <p>写真をドラッグして位置を調整。拡大して、丸いアイコンにしたい部分を選べます。</p>
+            <p>指1本で移動、2本指で拡大・縮小できます。スライダーでも調整できます。</p>
             <div
               ref={cropFrameRef}
               className={styles.cropFrame}
