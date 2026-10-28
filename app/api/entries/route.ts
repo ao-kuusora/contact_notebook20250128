@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { entryRepo } from "@/lib/repo/prismaRepo";
 import { createEntry, listEntries } from "@/lib/services/entries";
+import { cleanupDailyEntries } from "@/lib/cleanupDailyEntries";
 
 export const dynamic = "force-dynamic";
 
@@ -69,6 +70,7 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   try {
     const user = await getCurrentUser();
+    if (user?.coupleId) await cleanupDailyEntries(user.coupleId);
     const { searchParams } = new URL(req.url);
     const result = await listEntries(entryRepo, user, {
       type: searchParams.get("type"),
