@@ -16,7 +16,8 @@ export type EntryDTO = {
   /** 自分が読んだか (自分の投稿は常に true) */
   isRead: boolean;
   authorName: string;
-  user?: { displayName: string };
+  authorIconUrl?: string | null;
+  user?: { displayName: string; iconUrl?: string | null };
 };
 
 export type CoupleMemberDTO = {
