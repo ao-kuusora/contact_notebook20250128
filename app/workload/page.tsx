@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import UserAvatar from "@/components/UserAvatar";
 import styles from "./Workload.module.css";
 import { apiFetch, sendJson } from "@/lib/api";
 import type { EntryDTO } from "@/lib/types";
@@ -100,7 +101,7 @@ export default function WorkloadPage() {
           {latestTheirs && (
             <p className={styles.statusRow}>
               <span className={styles.statusLabel}>
-                {latestTheirs.authorName} さん
+                <UserAvatar name={latestTheirs.authorName} iconUrl={latestTheirs.authorIconUrl} href={`/profile/${latestTheirs.userId}`} /> {latestTheirs.authorName} さん
               </span>
               {latestTheirs.content}
               <span className={styles.statusTime}>
@@ -110,7 +111,7 @@ export default function WorkloadPage() {
           )}
           {latestMine && (
             <p className={styles.statusRow}>
-              <span className={styles.statusLabel}>あなた</span>
+              <span className={styles.statusLabel}><UserAvatar name={latestMine.authorName} iconUrl={latestMine.authorIconUrl} href={`/profile/${latestMine.userId}`} /> あなた</span>
               {latestMine.content}
               <span className={styles.statusTime}>
                 {new Date(latestMine.createdAt).toLocaleString()}
