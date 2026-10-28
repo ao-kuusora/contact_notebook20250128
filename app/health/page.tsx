@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import UserAvatar from "@/components/UserAvatar";
 import styles from "./Health.module.css";
 import { apiFetch, sendJson } from "@/lib/api";
 import type { EntryDTO } from "@/lib/types";
@@ -196,7 +197,7 @@ export default function HealthPage() {
             return (
               <article key={entry.id} className={styles.report}>
                 <div className={styles.reportHeader}>
-                  <strong>{entry.isMine ? "あなた" : entry.authorName}</strong>
+                  <UserAvatar name={entry.authorName} iconUrl={entry.authorIconUrl} href={`/profile/${entry.userId}`} /> <strong>{entry.isMine ? "あなた" : entry.authorName}</strong>
                   <time dateTime={entry.createdAt}>{new Date(entry.createdAt).toLocaleString("ja-JP")}</time>
                 </div>
                 <p className={styles.reportLine}>体調：{report.condition}</p>
