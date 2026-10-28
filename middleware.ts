@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// ログインが必要なページ。
-// ここでは Cookie の有無だけを見る簡易チェックで、トークン自体の検証は
-// 各 API (getCurrentUser) で行う。
+// ログインが必要なページの一覧。
+// ここではセッションCookieの有無だけを確認する。
+// セッションの有効性は、各APIで現在のユーザーを取得する際に検証する。
 const protectedPaths = [
   "/dashboard",
   "/tasks",
