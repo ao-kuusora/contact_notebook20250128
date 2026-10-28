@@ -26,27 +26,38 @@ export default function HealthPage() {
   const [notice, setNotice] = useState("");
 
   const conditionScore: Record<string, number> = { "しんどい": 1, "少し不調": 2, "まあまあ": 3, "元気": 4 };
-  const chartByDay = new Map<string, { report: ReturnType<typeof parseReport> }>();
+  // 同じ日付の2人分の記録を分けて保持する
+  const chartByDay = new Map<string, { mine?: string; partner?: string }>();
   [...entries]
     .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
     .forEach((entry) => {
       const report = parseReport(entry.content);
       if (conditionScore[report.condition] === undefined) return;
       const day = new Date(entry.createdAt).toLocaleDateString("sv-SE");
-      chartByDay.set(day, { report });
+      const item = chartByDay.get(day) ?? {};
+      if (entry.isMine) item.mine = report.condition;
+      else item.partner = report.condition;
+      chartByDay.set(day, item);
     });
   const chartEntries = [...chartByDay.entries()].slice(-14);
   const plotLeft = 92;
   const plotRight = 620;
   const plotTop = 28;
   const plotBottom = 190;
+  const xForIndex = (index: number) => chartEntries.length < 2
+    ? (plotLeft + plotRight) / 2
+    : plotLeft + index * (plotRight - plotLeft) / (chartEntries.length - 1);
+  const yForScore = (score: number) => plotBottom - (score - 1) * ((plotBottom - plotTop) / 3);
   const chartPoints = chartEntries.map(([day, item], index) => ({
-    x: chartEntries.length < 2 ? (plotLeft + plotRight) / 2 : plotLeft + index * (plotRight - plotLeft) / (chartEntries.length - 1),
-    y: plotBottom - (conditionScore[item.report.condition] - 1) * ((plotBottom - plotTop) / 3),
+    x: xForIndex(index),
     label: new Date(day + "T12:00:00").toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" }),
-    condition: item.report.condition,
+    mine: item.mine ? { condition: item.mine, y: yForScore(conditionScore[item.mine]) } : null,
+    partner: item.partner ? { condition: item.partner, y: yForScore(conditionScore[item.partner]) } : null,
   }));
-  const chartAccessibleLabel = chartPoints.map((point) => point.label + " " + point.condition).join("、");
+  const chartAccessibleLabel = chartPoints.map((point) =>
+    [point.label, point.mine && "あなた " + point.mine.condition, point.partner && "お相手 " + point.partner.condition]
+      .filter(Boolean).join(" ")
+  ).join("、");
 
   const fetchReports = useCallback(async () => {
     setLoading(true);
@@ -142,22 +153,36 @@ export default function HealthPage() {
             <p className={styles.empty}>体調を報告すると、ここにグラフが表示されるよ。</p>
           ) : (
             <div className={styles.chartWrap}>
-              <svg className={styles.chart} viewBox="0 0 640 250" role="img" aria-label={"最近の体調の推移：" + chartAccessibleLabel}>
+<div className={styles.chartLegend} aria-label="グラフの凡例">
+                <span><i className={styles.mineLegend} />あなた</span>
+                <span><i className={styles.partnerLegend} />お相手</span>
+              </div>
+              <svg className={styles.chart} viewBox="0 0 640 250" role="img" aria-label={"最近14日間のふたりの体調推移：" + chartAccessibleLabel}>
                 {[4, 3, 2, 1].map((score) => {
-                  const y = plotBottom - (score - 1) * ((plotBottom - plotTop) / 3);
+                  const y = yForScore(score);
                   const label = score === 4 ? "元気" : score === 3 ? "まあまあ" : score === 2 ? "少し不調" : "しんどい";
                   return <g key={score}><text x="8" y={y + 5} className={styles.chartAxisLabel}>{label}</text><line x1={plotLeft} x2={plotRight} y1={y} y2={y} className={styles.chartGrid} /></g>;
                 })}
-                {chartPoints.length > 1 && <polyline points={chartPoints.map((point) => point.x + "," + point.y).join(" ")} className={styles.chartLine} />}
+                {(["mine", "partner"] as const).map((person) => {
+                  const available = chartPoints.flatMap((point) => {
+                    const value = point[person];
+                    return value ? [{ x: point.x, y: value.y, label: point.label, condition: value.condition }] : [];
+                  });
+                  return <g key={person}>
+                    {available.length > 1 && <polyline points={available.map((point) => point.x + "," + point.y).join(" ")} className={person === "mine" ? styles.chartLineMine : styles.chartLinePartner} />}
+                    {available.map((point, index) => <g key={point.label + "-" + index}>
+                      <circle cx={point.x} cy={point.y} r="5" className={person === "mine" ? styles.chartDotMine : styles.chartDotPartner} />
+                      <title>{person === "mine" ? "あなた" : "お相手"}・{point.label}：{point.condition}</title>
+                    </g>)}
+                  </g>;
+                })}
                 {chartPoints.map((point, index) => <g key={point.label + "-" + index}>
-                  <circle cx={point.x} cy={point.y} r="5" className={styles.chartDot} />
                   {(chartPoints.length <= 7 || index === 0 || index === chartPoints.length - 1 || index % 2 === 0) && <text x={point.x} y="218" textAnchor="middle" className={styles.chartDate}>{point.label}</text>}
-                  <title>{point.label}：{point.condition}</title>
                 </g>)}
               </svg>
             </div>
           )}
-          <p className={styles.chartFootnote}>直近14日分（1日1件）を表示。上ほど元気、下ほどしんどい状態だよ。</p>
+          <p className={styles.chartFootnote}>直近14日分のふたりの体調を表示。上ほど元気、下ほどしんどい状態だよ。</p>
         </article>
       </section>
       </div>
