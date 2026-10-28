@@ -252,3 +252,53 @@
     height: 36px;
   }
 }
+
+.avatarUpload {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.uploadActions {
+  display: grid;
+  justify-items: start;
+  gap: 7px;
+}
+
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.secondaryButton {
+  min-height: 42px;
+  padding: 9px 14px;
+  border: 1px solid var(--c-brown-600);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--c-brown-700, var(--c-brown-600));
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.secondaryButton:hover:not(:disabled) {
+  background: #f6ebe1;
+}
+
+.secondaryButton:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.uploadActions small {
+  color: var(--c-muted);
+  font-size: 12px;
+}
+
