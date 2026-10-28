@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import UserAvatar from "@/components/UserAvatar";
 import Link from "next/link";
 import styles from "./Diary.module.css";
 import { apiFetch, sendJson } from "@/lib/api";
@@ -168,7 +169,7 @@ export default function DiaryPage() {
               </Link>
 
               <div className={styles.meta}>
-                <span className={styles.author}>{entry.authorName}</span>
+                <span className={styles.author}><UserAvatar name={entry.authorName} iconUrl={entry.authorIconUrl} href={`/profile/${entry.userId}`} /> {entry.authorName}</span>
                 <span className={styles.date}>
                   {new Date(entry.createdAt).toLocaleString()}
                 </span>
