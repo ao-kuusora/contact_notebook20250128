@@ -7,6 +7,7 @@ import { apiFetch, sendJson } from "@/lib/api";
 import type { EntryDTO } from "@/lib/types";
 import { useMarkRead } from "@/lib/useEntry";
 import { MAX_CONTENT_LENGTH } from "@/lib/validate";
+import EntryActions from "@/components/EntryActions";
 
 export default function DiaryPage() {
   const [entries, setEntries] = useState<EntryDTO[]>([]);
@@ -172,6 +173,7 @@ export default function DiaryPage() {
                   {new Date(entry.createdAt).toLocaleString()}
                 </span>
               </div>
+              <EntryActions entry={entry} onChanged={() => void fetchDiary(activeDate)} onDeleted={() => void fetchDiary(activeDate)} />
             </div>
           ))
         )}
