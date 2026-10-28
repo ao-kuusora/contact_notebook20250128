@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import UserAvatar from "@/components/UserAvatar";
 import Link from "next/link";
 import styles from "./Chores.module.css";
 import { apiFetch, sendJson } from "@/lib/api";
@@ -126,7 +127,7 @@ export default function ChoresPage() {
           entries.map((e) => (
             <Link key={e.id} href={`/chores/${e.id}`} className={styles.item}>
               <p className={styles.itemMeta}>
-                {e.authorName}・{new Date(e.createdAt).toLocaleString()}
+                <UserAvatar name={e.authorName} iconUrl={e.authorIconUrl} href={`/profile/${e.userId}`} /> {e.authorName}・{new Date(e.createdAt).toLocaleString()}
               </p>
               <p className={styles.itemContent}>{e.content}</p>
             </Link>
