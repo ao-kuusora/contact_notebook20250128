@@ -20,6 +20,7 @@ export default function BottomNav() {
     { href: "/health", label: "体調" },
     { href: "/workload", label: "忙しさ" },
     { href: "/diary", label: "日記" },
+    { href: "/settings", label: "設定" },
   ];
 
   async function handleLogout() {
@@ -40,10 +41,7 @@ export default function BottomNav() {
   }
 
   return (
-    <nav
-      className={`${styles.nav} ${expanded ? styles.expanded : styles.collapsed}`}
-      aria-label="メインナビゲーション"
-    >
+    <nav className={`${styles.nav} ${expanded ? styles.expanded : styles.collapsed}`} aria-label="メインナビゲーション">
       <button
         type="button"
         className={styles.toggle}
@@ -52,34 +50,20 @@ export default function BottomNav() {
         aria-expanded={expanded}
         aria-controls="bottom-navigation-links"
       >
-        <span className={styles.hamburger} aria-hidden="true">
-          <span />
-          <span />
-          <span />
-        </span>
+        <span className={styles.hamburger} aria-hidden="true"><span /><span /><span /></span>
         <span className={styles.toggleLabel}>{expanded ? "閉じる" : "メニュー"}</span>
       </button>
       <div id="bottom-navigation-links" className={styles.links} hidden={!expanded}>
         {items.map((item) => {
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`${styles.item} ${active ? styles.active : ""}`}
-              aria-current={active ? "page" : undefined}
-              onClick={() => setExpanded(false)}
-            >
+            <Link key={item.href} href={item.href} className={`${styles.item} ${active ? styles.active : ""}`}
+              aria-current={active ? "page" : undefined} onClick={() => setExpanded(false)}>
               {item.label}
             </Link>
           );
         })}
-        <button
-          type="button"
-          className={`${styles.item} ${styles.logout}`}
-          onClick={handleLogout}
-          disabled={loggingOut}
-        >
+        <button type="button" className={`${styles.item} ${styles.logout}`} onClick={handleLogout} disabled={loggingOut}>
           {loggingOut ? "ログアウト中…" : "ログアウト"}
         </button>
         {logoutError && <p className={styles.logoutError} role="alert">{logoutError}</p>}
