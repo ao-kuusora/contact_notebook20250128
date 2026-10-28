@@ -55,4 +55,5 @@ export type DashboardDTO = {
   latestDiary: EntryDTO | null;
   latestTask: EntryDTO | null;
   latestHealth: EntryDTO | null;
+  latestByPerson?: EntryDTO[];
 };
