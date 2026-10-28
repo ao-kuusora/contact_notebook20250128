@@ -107,7 +107,10 @@ export async function DELETE(
       return NextResponse.json({ error: "投稿した本人だけが削除できます" }, { status: 403 });
     }
 
-    await prisma.entry.delete({ where: { id: params.id } });
+    await prisma.$transaction([
+      prisma.readStatus.deleteMany({ where: { entryId: params.id } }),
+      prisma.entry.delete({ where: { id: params.id } }),
+    ]);
     return NextResponse.json({ success: true });
   } catch (e) {
     console.error(e);
