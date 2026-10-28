@@ -7,6 +7,7 @@ import { apiFetch, sendJson } from "@/lib/api";
 import type { EntryDTO } from "@/lib/types";
 import { useMarkRead } from "@/lib/useEntry";
 import { MAX_CONTENT_LENGTH } from "@/lib/validate";
+import UserAvatar from "@/components/UserAvatar";
 
 // 期限が近い順 (期限なしは最後)
 function sortByDue(list: EntryDTO[]) {
@@ -158,6 +159,8 @@ export default function ErrandsPage() {
                     {e.content}
                   </Link>
                 </div>
+
+                <p className={styles.due}><UserAvatar name={e.authorName} iconUrl={e.authorIconUrl} href={`/profile/${e.userId}`} /> {e.authorName} さんが入力 · {new Date(e.createdAt).toLocaleString("ja-JP")}</p>
 
                 {due && (
                   <p
