@@ -1,9 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import styles from "./SimpleEntryDetail.module.css";
 import { useEntry } from "@/lib/useEntry";
+import EntryActions from "@/components/EntryActions";
 
-/** 家事報告・おつかいメモの詳細画面 (共通) */
 export default function SimpleEntryDetail({
   id,
   heading,
@@ -12,6 +13,7 @@ export default function SimpleEntryDetail({
   heading: string;
 }) {
   const { entry, loading, error, reload } = useEntry(id);
+  const router = useRouter();
 
   return (
     <div className={styles.container}>
@@ -22,9 +24,7 @@ export default function SimpleEntryDetail({
       {error && (
         <div>
           <p className={styles.errorText}>{error}</p>
-          <button onClick={reload} className={styles.retryButton}>
-            再読み込み
-          </button>
+          <button onClick={reload} className={styles.retryButton}>再読み込み</button>
         </div>
       )}
 
@@ -39,6 +39,7 @@ export default function SimpleEntryDetail({
               期限: {new Date(entry.dueDate).toLocaleDateString()}
             </p>
           )}
+          <EntryActions entry={entry} onChanged={reload} onDeleted={() => router.back()} />
         </div>
       )}
     </div>
