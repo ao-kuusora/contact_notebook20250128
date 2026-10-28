@@ -60,6 +60,19 @@ export async function GET() {
         include: { user: { select: { displayName: true, iconUrl: true } } },
       });
 
+    const latestPersonEntriesRaw = await prisma.entry.findMany({
+      where: { coupleId, type: { in: ["CHORE", "ERRAND", "TASK", "DIARY", "HEALTH", "WORKLOAD"] }, ...( { OR: [{ type: { not: "HEALTH" } }, { type: "HEALTH", createdAt: { gte: healthSince } }] } ) },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+      include: { user: { select: { displayName: true, iconUrl: true } } },
+    });
+    const latestByPersonMap = new Map<string, (typeof latestPersonEntriesRaw)[number]>();
+    for (const entry of latestPersonEntriesRaw) {
+      const key = `${entry.type}:${entry.userId}`;
+      if (!latestByPersonMap.has(key)) latestByPersonMap.set(key, entry);
+    }
+    const latestByPerson = [...latestByPersonMap.values()].map((entry) => ({ ...entry, authorName: entry.user.displayName, authorIconUrl: entry.user.iconUrl, isMine: entry.userId === user.id }));
+
     const [unread, latestChore, urgentErrand, todayWorkload, latestDiary, latestTask, latestHealth] =
       await Promise.all([
         // 未読バッジの判定は /api/unread と同じ関数を使う
@@ -94,6 +107,7 @@ export async function GET() {
       latestDiary: shape(latestDiary),
       latestTask: shape(latestTask),
       latestHealth: shape(latestHealth),
+      latestByPerson,
     });
   } catch (e) {
     console.error("dashboard error:", e);
