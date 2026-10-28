@@ -6,6 +6,7 @@ import type { NextRequest } from "next/server";
 // 各 API (getCurrentUser) で行う。
 const protectedPaths = [
   "/dashboard",
+  "/tasks",
   "/chores",
   "/errands",
   "/workload",
@@ -28,6 +29,7 @@ export function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     "/dashboard/:path*",
+    "/tasks/:path*",
     "/chores/:path*",
     "/errands/:path*",
     "/workload/:path*",
