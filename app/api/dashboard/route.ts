@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
 import { readRepo } from "@/lib/repo/prismaRepo";
+import { cleanupDailyEntries } from "@/lib/cleanupDailyEntries";
 
 // cookies を使うため、ビルド時に静的生成せず毎回リクエスト時に実行する
 export const dynamic = "force-dynamic";
@@ -50,14 +51,8 @@ export async function GET() {
     }
 
     const coupleId = user.coupleId;
-    // 日付の境界は日本時間。家事・忙しさは当日分だけ残し、古い行はDBからも削除。
-    const now = new Date();
-    const jstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000);
-    const jstMidnight = new Date(Date.UTC(jstNow.getUTCFullYear(), jstNow.getUTCMonth(), jstNow.getUTCDate()) - 9 * 60 * 60 * 1000);
-    const yesterday = new Date(jstMidnight.getTime() - 24 * 60 * 60 * 1000);
-    const healthSince = new Date(jstMidnight.getTime() - 9 * 24 * 60 * 60 * 1000);
-    await prisma.entry.deleteMany({ where: { coupleId, type: { in: ["CHORE", "WORKLOAD"] }, createdAt: { lt: jstMidnight } } });
-    await prisma.entry.deleteMany({ where: { coupleId, type: "HEALTH", createdAt: { lt: healthSince } } });
+    // 日付が変わった後、表示前に期限切れの記録をDBから整理する。
+    const { midnight: jstMidnight, healthSince } = await cleanupDailyEntries(coupleId);
     const latestOf = (type: string, extraWhere: Record<string, unknown> = {}) =>
       prisma.entry.findFirst({
         where: { coupleId, type, ...extraWhere },
