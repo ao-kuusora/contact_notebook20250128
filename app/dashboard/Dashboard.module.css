@@ -244,4 +244,3 @@
   }
 }
 
-.latestPeopleList{display:grid;gap:12px;margin-top:12px}.latestPersonRow{display:flex;align-items:flex-start;gap:10px;padding-top:12px;border-top:1px solid var(--c-line)}.latestPersonContent{min-width:0;flex:1;overflow-wrap:anywhere}.latestPersonContent p{font-size:13px;line-height:1.6}.latestPersonContent time{display:block;margin-top:3px;color:var(--c-muted);font-size:11px}
