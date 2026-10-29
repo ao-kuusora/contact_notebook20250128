@@ -16,7 +16,7 @@
 .label, .dateLabel { display: flex; flex-direction: column; gap: 6px; color: var(--c-text); font-size: 13px; font-weight: 600; }
 .textarea, .dateInput { width: 100%; padding: 10px 11px; background: #fff; border: 1px solid var(--c-input-line); border-radius: 7px; font-size: 14px; }
 .textarea { resize: vertical; min-height: 72px; }
-.formFooter { display: flex; align-items: end; justify-content: space-between; gap: 12px; }
+.formFooter { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
 .dateLabel { flex: 1; max-width: 240px; }
 .primaryButton, .secondaryButton { min-height: 42px; padding: 9px 15px; border-radius: 7px; font-size: 13px; font-weight: 700; }
 .primaryButton { color: #fff; background: var(--c-brown-600); }
